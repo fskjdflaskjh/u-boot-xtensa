@@ -95,6 +95,7 @@ table_entry_t arch_name[] = {
     {	IH_CPU_SPARC64,		"sparc64",	"SPARC 64 Bit",	},
     {	IH_CPU_BLACKFIN,	"blackfin",	"Blackfin",	},
     {	IH_CPU_AVR32,		"avr32",	"AVR32",	},
+    {	IH_CPU_XTENSA,		"xtensa",	"Xtensa",	},
     {	-1,			"",		"",		},
 };
 

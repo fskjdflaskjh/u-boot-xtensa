@@ -165,7 +165,14 @@ CROSS_COMPILE = avr32-linux-
 endif
 ifeq ($(ARCH),sh)
 CROSS_COMPILE = sh4-linux-
-endif	# sh
+endif
+ifeq ($(ARCH),xtensa)
+ifeq ($(VARIANT),)
+CROSS_COMPILE = xtensa-linux-
+else
+CROSS_COMPILE = xtensa_$(VARIANT)-linux-
+endif	# VARIANT
+endif	# xtensa
 endif	# HOSTARCH,ARCH
 endif	# CROSS_COMPILE
 
@@ -2849,6 +2856,16 @@ ms7750se_config: unconfig
 ms7722se_config :	unconfig
 	@echo "#define CONFIG_MS7722SE 1" > $(obj)include/config.h
 	@$(MKCONFIG) -a $(@:_config=) sh sh4 ms7722se
+
+#========================================================================
+# XTENSA
+#========================================================================
+#########################################################################
+## Avnet FPGA eval boards with Tensilica supplied FPGA configurations
+#########################################################################
+%xtav60_config: unconfig
+	@$(MKCONFIG) -a xtav60 xtensa xtensa xtav60 avnet NULL $(*:_=)
+	@echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk
 
 #########################################################################
 #########################################################################

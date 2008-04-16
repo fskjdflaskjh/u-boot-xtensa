@@ -69,6 +69,11 @@ ifeq ($(ARCH),sh)
 LOAD_ADDR = 0x8C000000
 endif
 
+ifeq ($(ARCH),xtensa)
+LOAD_ADDR := "\#include \<config.h\>\\nCFG_LOAD_ADDR"
+LOAD_ADDR := $(shell echo -e "$(LOAD_ADDR)" | $(CPP) $(CPPFLAGS) -x assembler -E -P -)
+LOAD_ADDR := $(shell printf "0x%08x" $$[$(LOAD_ADDR)])
+endif
 
 include $(TOPDIR)/config.mk
 

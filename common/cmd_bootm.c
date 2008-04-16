@@ -262,6 +262,8 @@ int do_bootm (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	if (hdr->ih_arch != IH_CPU_PPC)
 #elif defined(__sh__)
 	if (hdr->ih_arch != IH_CPU_SH)
+#elif defined(__xtensa__)
+	if (hdr->ih_arch != IH_CPU_XTENSA)
 #else
 # error Unknown CPU type
 #endif
@@ -1477,6 +1479,7 @@ print_type (image_header_t *hdr)
 	case IH_CPU_SH:		arch = "SuperH";		break;
 	case IH_CPU_SPARC64:	arch = "SPARC 64 Bit";		break;
 	case IH_CPU_SPARC:	arch = "SPARC";			break;
+	case IH_CPU_XTENSA:	arch = "Xtensa";		break;
 	default:		arch = "Unknown Architecture";	break;
 	}
 
