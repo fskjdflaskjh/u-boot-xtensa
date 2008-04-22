@@ -45,6 +45,7 @@ SECTIONS
   SECTION_VECTOR(WindowVectors,text,XCHAL_WINDOW_VECTORS_VADDR,FOLLOWING(.ResetVector.text))
   SECTION_VECTOR(KernelExceptionVector,literal,XCHAL_KERNEL_VECTOR_VADDR-4,FOLLOWING(.WindowVectors.text))
   SECTION_VECTOR(KernelExceptionVector,text,XCHAL_KERNEL_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.literal))
+  SECTION_VECTOR(UserExceptionVector,literal,XCHAL_USER_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.literal))
   SECTION_VECTOR(UserExceptionVector,text,XCHAL_USER_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.text))
   SECTION_VECTOR(DoubleExceptionVector,literal,XCHAL_DOUBLEEXC_VECTOR_VADDR-16,FOLLOWING(.UserExceptionVector.text))
   SECTION_VECTOR(DoubleExceptionVector,text,XCHAL_DOUBLEEXC_VECTOR_VADDR,FOLLOWING(.UserExceptionVector.text))
@@ -68,6 +69,7 @@ SECTIONS
     RELOCATE2(WindowVectors,text);
     RELOCATE2(KernelExceptionVector,literal);
     RELOCATE2(KernelExceptionVector,text);
+    RELOCATE2(UserExceptionVector,literal);
     RELOCATE2(UserExceptionVector,text);
     RELOCATE2(DoubleExceptionVector,literal);
     RELOCATE2(DoubleExceptionVector,text);
