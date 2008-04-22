@@ -191,11 +191,6 @@ void **jt;		/* jt must have extern linkage for asm to see it */
 #else
 # define SFT "12"
 #endif
-// FIXME: why not jump directly to the function? 
-// FIXME: movi a15, jt
-// FIXME: l32i a15, a15, 0
-// FIXME: jx a15
-// FIXME: What about arguments in either implemenation?
 #define EXPORT_FUNC(x) \
 	asm volatile ("\n"			\
 "	.extern jt\n"				\
@@ -217,6 +212,11 @@ void **jt;		/* jt must have extern linkage for asm to see it */
 	: : "i"(XF_ ## x * sizeof(void *)));
 #endif /* __XTENSA_CALL0_ABI__ */
 
+__asm__ (
+"	.section .trampoline, \"ax\"\n"
+"	.align 4\n"
+"	j _main\n"
+"	.previous\n");
 #else
 #error stubs definition missing for this architecture
 #endif

@@ -26,7 +26,10 @@ SECTIONS
 	. = ALIGN(4);
 	.text       :
 	{
-	  *(.literal .text)
+	  *(.trampoline)
+	  *(.literal)
+	  _main = .;
+	  *(.text)
 	}
 
 	. = ALIGN(4);

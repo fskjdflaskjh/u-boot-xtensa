@@ -28,7 +28,7 @@
 #include <command.h>
 #include <net.h>
 
-#if defined(CONFIG_I386)
+#if defined(CONFIG_I386) || defined(CONFIG_XTENSA)
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
@@ -50,7 +50,7 @@ int do_go (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	 * pass address parameter as argv[0] (aka command name),
 	 * and all remaining args
 	 */
-#if defined(CONFIG_I386)
+#if defined(CONFIG_I386) || defined(CONFIG_XTENSA)
 	/*
 	 * x86 does not use a dedicated register to pass the pointer
 	 * to the global_data
