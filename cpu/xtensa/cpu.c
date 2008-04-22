@@ -39,7 +39,7 @@ int checkcpu(void)
 	char buf[120], mhz[8];
 
 	sprintf(buf, "CPU:    Xtensa %s at %s MHz\n",
-		__stringify(CONFIG_XTENSA_CORE), strmhz(mhz, gd->cpu_clk));
+		XCHAL_CORE_ID, strmhz(mhz, gd->cpu_clk));
 	puts(buf);
 	return 0;
 }

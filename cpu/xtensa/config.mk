@@ -24,7 +24,3 @@
 LDSCRIPT        := $(OBJTREE)/cpu/$(CPU)/u-boot.lds
 LDINCS          := -I$(TOPDIR)/include
 
-#PLATFORM_RELFLAGS += -mlongcalls -fkeep-inline-functions
-#PLATFORM_CPPFLAGS += -I$(XTENSA_TOOLS_ROOT)/xtensa-elf/include/xtensa/$(BOARD)
-#PLATFORM_CPPFLAGS += -I$(XTENSA_TOOLS_ROOT)/xtensa-elf/include
-
