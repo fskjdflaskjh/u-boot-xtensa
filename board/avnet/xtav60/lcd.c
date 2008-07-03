@@ -9,12 +9,8 @@
  */
 
 /*
- *
- * FIXME: this code is from the examples from the LX60 user guide.
- * 
- * The lcd_pause function does busy waiting, which is probably not
- * great. Maybe the code could be changed to use kernel timers, or
- * change the hardware to not need to wait.
+ * The LCD functions busy wait due to limitations of the LCD controller.
+ * This is a single-threaded boot-loader, so we don't care about that.
  */
 
 

@@ -23,6 +23,7 @@
 #include <linux/ctype.h>
 #include <linux/string.h>
 #include <asm/stringify.h>
+#include <xtensa.h>
 #include <common.h>
 #include <command.h>
 
@@ -67,7 +68,6 @@ int misc_init_f(void)
 	lcd_init();
 	lcd_disp_at_pos("UBOOT", 0);
 
-
 	return 0;
 }
 
@@ -104,7 +104,7 @@ int misc_init_r(void)
  * String may have embedded newlines. Starts at top left and wraps long lines.
  */
 
-static void display_printf(const char *fmt, ...)
+void display_printf(const char *fmt, ...)
 {
 	va_list args;
 

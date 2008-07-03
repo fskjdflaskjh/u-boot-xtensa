@@ -339,6 +339,13 @@ N: Frank Morauf
 E: frank.morauf@salzbrenner.com
 D: Support for Embedded Planet RPX Super Board
 
+N: Ross Morley
+E: ross@linux-xtensa.org
+E: ross@computer.org
+D: Port to Xtensa architecture
+D: Port to Avnet Xtensa (xtav*) boards
+W: http://www.linux-xtensa.org
+
 N: David M?ller
 E: d.mueller@elsoft.ch
 D: Support for Samsung ARM920T SMDK2410 eval board
@@ -528,3 +535,9 @@ N: Timo Tuunainen
 E: timo.tuunainen@sysart.fi
 D: Support for Artila M-501 starter kit
 W: http://www.sysart.fi/
+
+N: Christian Zankel
+E: chris@zankel.net
+D: Port Xtensa architecture from Tensilica tools to linux-xtensa tools environment
+W: http://www.linux-xtensa.org
+

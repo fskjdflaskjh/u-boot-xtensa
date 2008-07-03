@@ -31,12 +31,42 @@
 #include <asm/string.h>
 #include <asm/regs.h>
 
+extern void xtensa_mem_exc_dummy(struct pt_regs*);
+
 void unhandled_exception(struct pt_regs*);
 
 typedef void (*handler_t)(struct pt_regs*);
 
+#define E(cause) EXCCAUSE_ ## cause
+
 handler_t exc_table[EXCCAUSE_LAST] = { 
-	[0 ... EXCCAUSE_LAST-1] unhandled_exception, 
+	unhandled_exception,	/* EXCCAUSE_ILLEGAL_INSTRUCTION */
+	unhandled_exception,    /* EXCCAUSE_SYSTEM_CALL */
+	unhandled_exception,    /* EXCCAUSE_INSTRUCTION_FETCH_ERROR */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_LOAD_STORE_ERROR */
+	unhandled_exception,    /* EXCCAUSE_LEVEL1_INTERRUPT */
+	unhandled_exception,    /* EXCCAUSE_ALLOCA */
+	unhandled_exception,    /* EXCCAUSE_INTEGER_DIVIDE_BY_ZERO */
+	unhandled_exception,    /* EXCCAUSE_SPECULATION */
+	unhandled_exception,    /* EXCCAUSE_PRIVILEGED */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_UNALIGNED */
+	unhandled_exception,    /* EXCCAUSE_INSTR_DATA_ERROR */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_LOAD_STORE_DATA_ERROR */
+	unhandled_exception,    /* EXCCAUSE_INSTR_ADDR_ERROR */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_LOAD_STORE_ADDR_ERROR */
+	unhandled_exception,    /* EXCCAUSE_ITLB_MISS */
+	unhandled_exception,    /* EXCCAUSE_ITLB_MULTIHIT */
+	unhandled_exception,    /* EXCCAUSE_ITLB_PRIVILEGE */
+	unhandled_exception,    /* EXCCAUSE_ITLB_SIZE_RESTRICTION */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_FETCH_CACHE_ATTRIBUTE */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_DTLB_MISS */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_DTLB_MULTIHIT */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_DTLB_PRIVILEGE */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_DTLB_SIZE_RESTRICTION */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_LOAD_CACHE_ATTRIBUTE */
+	xtensa_mem_exc_dummy,   /* EXCCAUSE_STORE_CACHE_ATTRIBUTE */
+	[EXCCAUSE_STORE_CACHE_ATTRIBUTE+1 ... EXCCAUSE_LAST-1]
+	    unhandled_exception 
 };
 
 void unhandled_exception(struct pt_regs *regs)

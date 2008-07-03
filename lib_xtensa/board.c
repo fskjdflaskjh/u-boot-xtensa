@@ -25,7 +25,8 @@
 #include <version.h>
 #include <net.h>
 #include <config.h>
-#include <asm/stringify.h>		// FIXME: move to generic
+#include <xtensa.h>
+#include <asm/stringify.h>		// XT-FIXME: move to generic
 #include <asm/addrspace.h>
 #include <asm/bootparam.h>
 
@@ -58,7 +59,7 @@ static ulong mem_malloc_brk = 0;
 static
 void mem_malloc_init(ulong dest_addr)
 {
-	mem_malloc_start = dest_addr;		// FIXME: align-up?
+	mem_malloc_start = ALIGNUP(4, dest_addr);
 	mem_malloc_end = dest_addr + CFG_MALLOC_LEN;
 	mem_malloc_brk = mem_malloc_start;
 
@@ -160,7 +161,7 @@ static int init_flash(void)
 	bd->bi_flashsize = flash_init();
 
 #if CFG_MONITOR_BASE == CFG_FLASH_BASE
-	bd->bi_flashoffset = monitor_flash_len;	/* skip U-Boot sectors */
+	bd->bi_flashoffset = monitor_flash_len; /* skip U-Boot sectors */
 #else
 	bd->bi_flashoffset = 0;
 #endif
@@ -242,7 +243,7 @@ init_fnc_t *init_sequence[] = {
 	devices_init,	/* Initialize devices */
 	console_init_r, /* Initialize the console */
 #ifdef CONFIG_CMD_NET
-	ethernet_setup,	/* Initialize ethernet */
+	ethernet_setup, /* Initialize ethernet */
 #endif
 	NULL,
 };
@@ -255,8 +256,8 @@ init_fnc_t *init_sequence[] = {
 void board_init_f(ulong data)
 {
 	/* 
-	 * All RAM sections have been unpacked to RAM (relocated) and the board
-	 * has been initialized by the Xtensa Tools (XTOS) startup code.
+	 * All RAM sections have been unpacked to RAM (relocated) 
+	 * and the board has been initialized.
 	 */
 	init_fnc_t **init_fnc_ptr;
 	bd_t *bd;
@@ -300,6 +301,7 @@ void hang(void)
 	puts ("### ERROR ### Please RESET the board ###\n");
 
 	udelay(10000000);	/* 10s for user to read any existing message */
+	display_printf("Hung! Pls reset");
 
 	for (;;);
 }

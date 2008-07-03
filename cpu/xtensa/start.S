@@ -23,6 +23,7 @@
 
 #include <asm/asmmacro.h>
 #include <asm/regs.h>
+#include <asm/variant/tie.h>
 
 /*
  * Offsets into the the pt_regs struture.
@@ -100,9 +101,13 @@ _start:
 
 	wsr	a0, LCOUNT
 
-	/* Set PS.INTLEVEL = 1, PS.WOE = 0, PS.EXCM = 0 */
+	/* Set PS.WOE = 0, PS.EXCM = 1, PS.INTLEVEL = EXCM level */
 
+#if XCHAL_HAVE_XEA1
 	movi	a2, 1
+#else
+	movi	a2, (1<<PS_EXCM_BIT) | XCHAL_EXCM_LEVEL
+#endif
 	wsr	a2, PS
 	rsync
 
@@ -179,31 +184,39 @@ _start:
 	diwb	a2, 3 << XCHAL_DCACHE_LINEWIDTH
 	__endla	a2, a3, 4 << XCHAL_DCACHE_LINEWIDTH
 
-	/* Setup stack and enable window exceptions. */
+	/* Setup stack, PS.WOE = 1, PS.EXCM = 0, PS.INTLEVEL = EXCM level. */
 
 	movi	a1, stack_end
-
-	movi	a2, 0x00040001		# WOE = 1, INTLEVEL = 1, UM = 0
+#if XCHAL_HAVE_XEA1
+	movi	a2, (1<<PS_WOE_BIT) | 1
+#elif __XTENSA_CALL0_ABI__
+	movi	a2, XCHAL_EXCM_LEVEL
+#else
+	movi	a2, (1<<PS_WOE_BIT) | XCHAL_EXCM_LEVEL
+#endif
 	wsr	a2, PS
 	rsync
 
+        /* Call board initialization routine (never returns). */
+
 	movi	a4, board_init_f
+#ifdef __XTENSA_CALL0_ABI__
+1:	callx0	a4
+#else
 1:	callx4	a4
+#endif
+        movi    a4, hang                # should never get here
 	j	1b
+
+#if XCHAL_HAVE_EXCEPTIONS
 
 /*
  * Exception vectors.
  *
- *  Verious notes:
+ *  Various notes:
  *   - We currently don't use the user exception vector (PS.UM is always 0),
  *     but do define such a vector, just in case. They both jump to the
  *     same exception handler, though.
- *   - The double exception vector currently also jumps to the same
- *     common exception handler. (should probably do something different)
- *   - DEPC is set to 0 when coming from the kernel (or user) exception, 
- *     but retains the correct value when coming from the double exception
- *     vector. This can be used to distinguish between double and the other
- *     exceptions.
  *   - We currently only save the bare minimum number of registers:
  *     a0...a15, sar, loop-registers, exception register (epc1, excvaddr,
  *     exccause, depc)
@@ -218,8 +231,6 @@ _start:
 _KernelExceptionVector:
 
 	wsr	a2, EXCSAVE1
-	movi	a0, 0
-	wsr	a0, DEPC
 	movi	a2, ExceptionHandler
 	jx	a2
 
@@ -227,18 +238,22 @@ _KernelExceptionVector:
 _UserExceptionVector:
 
 	wsr	a2, EXCSAVE1
-	movi	a0, 0
-	wsr	a0, DEPC
 	movi	a2, ExceptionHandler
 	jx	a2
 
-#if XCHAL_HAVE_XEA2
+#if !XCHAL_HAVE_XEA1
 	.global _DoubleExceptionVector
 _DoubleExceptionVector:
 
-	wsr	a2, EXCSAVE1
-	movi	a2, ExceptionHandler
-	jx	a2
+#ifdef __XTENSA_CALL0_ABI__
+	wsr	a0, EXCSAVE1
+        movi    a0, hang                # report and ask user to reset board
+	callx0	a0
+#else
+	wsr	a4, EXCSAVE1
+        movi    a4, hang                # report and ask user to reset board
+	callx4	a4
+#endif
 #endif
 
 
@@ -306,20 +321,32 @@ ExceptionHandler:
 	s32i	a3, a1, PT_LEND
 #endif
 
-	/* Jump to registered handler. */
+	/* Set up C environment and call registered handler. */
+	/* Setup stack, PS.WOE = 1, PS.EXCM = 0, PS.INTLEVEL = EXCM level. */
 
 	rsr	a2, EXCCAUSE
-	movi	a3, (1 << PS_WOE_BIT)|1	# disable interrupts
+#if XCHAL_HAVE_XEA1
+	movi	a3, (1<<PS_WOE_BIT) | 1
+#elif __XTENSA_CALL0_ABI__
+	movi	a3, XCHAL_EXCM_LEVEL
+#else
+	movi	a3, (1<<PS_WOE_BIT) | XCHAL_EXCM_LEVEL
+#endif
 	xsr	a3, PS
 	rsync
 	s32i	a2, a1, PT_EXCCAUSE
 	s32i	a3, a1, PT_PS
 
-	movi	a4, exc_table
-	addx4	a4, a2, a4
-	l32i	a4, a4, 0
+	movi	a0, exc_table
+	addx4	a0, a2, a0
+	l32i	a0, a0, 0
+#ifdef __XTENSA_CALL0_ABI__
+	mov	a2, a1			# Provide stack frame as only argument
+	callx0	a0
+#else
 	mov	a6, a1			# Provide stack frame as only argument
-	callx4	a4
+	callx4	a0
+#endif
 
 	/* Go to exception mode (PS.EXCM=1) */
 
@@ -379,24 +406,74 @@ ExceptionHandler:
 	l32i	a4, a1, PT_AREG + 4 * 4
 	l32i	a3, a1, PT_AREG + 3 * 4
 	l32i	a2, a1, PT_AREG + 2 * 4
-
-	/* Check if we came from a double exception. */
-
-	l32i	a0, a1, PT_DEPC
-	bnez	a0, 1f
-
 	l32i	a0, a1, PT_AREG + 0 * 4
-	l32i	a1, a1, PT_AREG + 1 * 4
+
+	l32i	a1, a1, PT_AREG + 1 * 4 # Remove ptrace stack frame
 
 	rfe
 
-1:	wsr	a0, DEPC
-	l32i	a0, a1, PT_AREG + 0 * 4
-	l32i	a1, a1, PT_AREG + 1 * 4
 
-	rfde
+/*
+ * Dummy memory exception handler to avoid crash/hang on load/store of
+ * an invalid address (such as might be requested by user "md" command).
+ * U-Boot currently does not provide a hook to prevent accessing invalid
+ * addresses nor to inform the user, so we have to try to live with it.
+ * Simply skip the offending instruction (don't care what load returns).
+ * This is ugly (and possibly dangerous in Xtensa FLIX configs), but if we
+ * get here we're in trouble anyway, so might as well *try* to recover.
+ *	void xtensa_mem_exc_dummy(struct pt_regs*);
+ */
+        /* Table of instruction sizes based on op0 field. */
+	.section .rodata, "a"
+	.type	op0_format_lengths, @object
+	.align	4
+op0_format_lengths:
+	.byte	XCHAL_OP0_FORMAT_LENGTHS
 
+	.text
+	.global xtensa_mem_exc_dummy
+	.type	xtensa_mem_exc_dummy, @function
+	.align	4
+xtensa_mem_exc_dummy:
 
+#ifndef __XTENSA_CALL0_ABI__
+        entry   a1, 16
+#endif
+
+	/* Decode the size of the instruction that caused the exception. */
+	l32i    a3, a2, PT_PC           /* a3 = PC of exception */
+	l8ui	a4, a3, 0		/* a4 = first byte of insn */
+	movi	a5, op0_format_lengths	/* a5 = table of instruction sizes */
+	#if XCHAL_HAVE_BE
+	extui	a4, a4, 4, 4		/* a4 = op0 = big end nibble */
+	#else
+	extui	a4, a4, 0, 4		/* a4 = op0 = little end nibble */
+	#endif
+	add	a5, a5, a4		/* index table with op0 */
+	l8ui	a4, a5, 0		/* a4 = instruction size */
+
+	/* Increment the PC past the instruction that caused the exception. */
+	add     a3, a3, a4              /* PC += size of insn   */
+	#if XCHAL_HAVE_LOOPS
+	l32i    a4, a2, PT_LEND         /* if (PC == LEND       */
+	bne     a3, a4, 1f
+	l32i    a4, a2, PT_LCOUNT       /*     && LCOUNT != 0)  */
+	beqz    a4, 1f                  /* {                    */
+	addi    a4, a4, -1              /*   --LCOUNT           */
+	l32i    a3, a2, PT_LBEG         /*   PC = LBEG          */
+	s32i    a4, a2, PT_LCOUNT       /* }                    */
+	#endif
+1:	s32i    a3, a2, PT_PC           /* update PC            */
+
+#ifdef __XTENSA_CALL0_ABI__
+        ret
+#else
+        retw
+#endif
+
+#endif /* XCHAL_HAVE_EXCEPTIONS */
+
+#if XCHAL_HAVE_WINDOWED
 
 /*
  * Window overflow and underflow handlers.
@@ -545,4 +622,5 @@ _WindowUnderflow12:
 stack:	.fill	0x2000, 1, 0
 stack_end:
 
+#endif /* XCHAL_HAVE_WINDOWED */
 
