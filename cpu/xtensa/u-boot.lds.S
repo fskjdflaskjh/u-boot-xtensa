@@ -60,6 +60,7 @@ SECTIONS
   SECTION_rodata(ALIGN(16),FOLLOWING(.text))
   SECTION_data(ALIGN(16),FOLLOWING(.rodata))
   SECTION_bss(ALIGN(16),FOLLOWING(.data))
+  __stack = CFG_MEMORY_TOP;
 
   __heap_start = .;
 

@@ -186,7 +186,7 @@ _start:
 
 	/* Setup stack, PS.WOE = 1, PS.EXCM = 0, PS.INTLEVEL = EXCM level. */
 
-	movi	a1, stack_end
+	movi	a1, __stack
 #if XCHAL_HAVE_XEA1
 	movi	a2, (1<<PS_WOE_BIT) | 1
 #elif __XTENSA_CALL0_ABI__
@@ -614,13 +614,6 @@ _WindowUnderflow12:
 	l32e	a10, a11, -24
 	l32e	a11, a11, -20
 	rfwu
-
-.section ".bss"
-	.global	stack
-	.global stack_end
-	.align	16
-stack:	.fill	0x2000, 1, 0
-stack_end:
 
 #endif /* XCHAL_HAVE_WINDOWED */
 

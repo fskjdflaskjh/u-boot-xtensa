@@ -262,6 +262,7 @@ void board_init_f(ulong data)
 	init_fnc_t **init_fnc_ptr;
 	bd_t *bd;
 	ulong heap = CFG_HEAP_BASE;
+	char mhz[8];
 
 	gd = (gd_t *)(heap - sizeof(gd_t));
 	memset((void *)gd, 0, sizeof(gd_t));
@@ -282,6 +283,9 @@ void board_init_f(ulong data)
 			hang ();
 		}
 	}
+
+	/* Announce our arrival and clock frequency */
+	display_printf("U-Boot %5s MHz", strmhz(mhz, gd->cpu_clk));
 
 	while(1) 
 		main_loop();

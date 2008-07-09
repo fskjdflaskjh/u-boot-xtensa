@@ -63,10 +63,10 @@ int misc_init_f(void)
 	gd->cpu_clk = 50000000UL;
 #endif
 
-	/* Make ourselves visible through the LCD. */
+	/* Initialize the LCD. */
 
 	lcd_init();
-	lcd_disp_at_pos("UBOOT", 0);
+	display_printf("U-Boot starting");
 
 	return 0;
 }
