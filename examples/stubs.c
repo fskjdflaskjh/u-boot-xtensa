@@ -212,6 +212,11 @@ void **jt;		/* jt must have extern linkage for asm to see it */
 	: : "i"(XF_ ## x * sizeof(void *)));
 #endif /* __XTENSA_CALL0_ABI__ */
 
+/*
+ * Provide an entrypoint at the very base of the binary image that jumps over
+ * the literals, so the "go" command can use the base of the image and it is
+ * not necessary to document a magic start address that varies per core config.
+ */
 __asm__ (
 "	.section .trampoline, \"ax\"\n"
 "	.align 4\n"
@@ -247,7 +252,7 @@ void app_startup(char **argv)
 		*cp++ = 0;
 	}
 
-#if defined(CONFIG_I386) || (defined(CONFIG_XTENSA) && ~defined(__XTENSA_CALL0_ABI__))
+#if defined(CONFIG_I386) || (defined(CONFIG_XTENSA) && !defined(__XTENSA_CALL0_ABI__))
 	/* some archs don't have a dedicated register for passing global_data */
 	global_data = (gd_t *)argv[-1];
 	jt = global_data->jt;

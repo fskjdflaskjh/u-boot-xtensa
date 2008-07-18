@@ -79,7 +79,6 @@
   .ResetVector.text _vma_ : _lma_					\
   {									\
     FORCE_OUTPUT;							\
-    __monitor_start = ABSOLUTE(.);					\
     KEEP(*(.ResetVector.text));						\
     KEEP(*(.reset.literal .reset.text))					\
   }
@@ -151,7 +150,6 @@
 #define SECTION_bss(_vma_, _lma_)					\
   .bss _vma_ : _lma_							\
   {									\
-    __monitor_end = LOADADDR(.bss);					\
     . = ALIGN (8);							\
     _bss_start = ABSOLUTE(.);						\
     __bss_start = ABSOLUTE(.);						\

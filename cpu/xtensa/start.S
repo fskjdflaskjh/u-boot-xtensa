@@ -79,6 +79,16 @@ _start:
 
 	movi	a0, 0
 
+	/*
+	 * For full MMU cores, put page table at unmapped virtual address.
+	 * This ensures that accesses outside the static maps result
+	 * in miss exceptions rather than random behaviour.
+	 */
+
+#if XCHAL_HAVE_TLBS
+	wsr	a0, PTEVADDR
+#endif
+
 	/* Disable dbreak debug exceptions. */
 
 #if XCHAL_HAVE_DEBUG && XCHAL_NUM_DBREAK > 0
@@ -101,12 +111,12 @@ _start:
 
 	wsr	a0, LCOUNT
 
-	/* Set PS.WOE = 0, PS.EXCM = 1, PS.INTLEVEL = EXCM level */
+	/* Set PS.WOE = 0, PS.EXCM = 0 (for loop), PS.INTLEVEL = EXCM level */
 
 #if XCHAL_HAVE_XEA1
 	movi	a2, 1
 #else
-	movi	a2, (1<<PS_EXCM_BIT) | XCHAL_EXCM_LEVEL
+	movi	a2, XCHAL_EXCM_LEVEL
 #endif
 	wsr	a2, PS
 	rsync
@@ -151,7 +161,7 @@ _start:
 1:	beq	a2, a3, 3f	# no more entries?
 	l32i	a4, a2, 0	# start destination (in RAM)
 	l32i	a5, a2, 4	# end destination (in RAM)
-	l32i	a6, a2, 8	# star source (in ROM)
+	l32i	a6, a2, 8	# start source (in ROM)
 	addi	a2, a2, 12	# next entry
 	beq	a4, a5, 1b	# skip, empty entry
 	beq	a4, a6, 1b	# skip, source and destination are the same
@@ -226,7 +236,6 @@ _start:
  */
 
 	.section .KernelExceptionVector.text, "ax"
-
 	.global _KernelExceptionVector
 _KernelExceptionVector:
 
@@ -234,6 +243,7 @@ _KernelExceptionVector:
 	movi	a2, ExceptionHandler
 	jx	a2
 
+	.section .UserExceptionVector.text, "ax"
 	.global _UserExceptionVector
 _UserExceptionVector:
 
@@ -242,6 +252,7 @@ _UserExceptionVector:
 	jx	a2
 
 #if !XCHAL_HAVE_XEA1
+	.section .DoubleExceptionVector.text, "ax"
 	.global _DoubleExceptionVector
 _DoubleExceptionVector:
 
@@ -255,6 +266,7 @@ _DoubleExceptionVector:
 	callx4	a4
 #endif
 #endif
+	/* Does not return here. */
 
 
 	.text
@@ -303,8 +315,6 @@ ExceptionHandler:
 
 	rsr	a2, WINDOWSTART
 	s32i	a2, a1, PT_WINDOWSTART
-	rsr	a2, DEPC
-	s32i	a2, a1, PT_DEPC
 
 	rsr	a2, SAR
 	rsr	a3, EPC1
@@ -343,12 +353,13 @@ ExceptionHandler:
 #ifdef __XTENSA_CALL0_ABI__
 	mov	a2, a1			# Provide stack frame as only argument
 	callx0	a0
+	l32i	a3, a1, PT_PS
 #else
 	mov	a6, a1			# Provide stack frame as only argument
 	callx4	a0
 #endif
 
-	/* Go to exception mode (PS.EXCM=1) */
+	/* Restore PS and go to exception mode (PS.EXCM=1) */
 
 	wsr	a3, PS
 

@@ -157,7 +157,7 @@ static int init_flash(void)
 	/* Must set monitor_flash_len before calling flash_init() */
 	monitor_flash_len = (ulong)&__monitor_end - (ulong)&__monitor_start;
 
-	bd->bi_flashbase = CFG_FLASH_BASE;
+	bd->bi_flashstart = CFG_FLASH_BASE;
 	bd->bi_flashsize = flash_init();
 
 #if CFG_MONITOR_BASE == CFG_FLASH_BASE

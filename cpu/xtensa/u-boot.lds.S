@@ -43,12 +43,12 @@ SECTIONS
 
   SECTION_ResetVector(XCHAL_RESET_VECTOR_VADDR, LMA_EQ_VMA)
   SECTION_VECTOR(WindowVectors,text,XCHAL_WINDOW_VECTORS_VADDR,FOLLOWING(.ResetVector.text))
-  SECTION_VECTOR(KernelExceptionVector,literal,XCHAL_KERNEL_VECTOR_VADDR-4,FOLLOWING(.WindowVectors.text))
+  SECTION_VECTOR(KernelExceptionVector,literal,XCHAL_KERNEL_VECTOR_VADDR-8,FOLLOWING(.WindowVectors.text))
   SECTION_VECTOR(KernelExceptionVector,text,XCHAL_KERNEL_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.literal))
-  SECTION_VECTOR(UserExceptionVector,literal,XCHAL_USER_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.literal))
-  SECTION_VECTOR(UserExceptionVector,text,XCHAL_USER_VECTOR_VADDR,FOLLOWING(.KernelExceptionVector.text))
-  SECTION_VECTOR(DoubleExceptionVector,literal,XCHAL_DOUBLEEXC_VECTOR_VADDR-16,FOLLOWING(.UserExceptionVector.text))
-  SECTION_VECTOR(DoubleExceptionVector,text,XCHAL_DOUBLEEXC_VECTOR_VADDR,FOLLOWING(.UserExceptionVector.text))
+  SECTION_VECTOR(UserExceptionVector,literal,XCHAL_USER_VECTOR_VADDR-8,FOLLOWING(.KernelExceptionVector.text))
+  SECTION_VECTOR(UserExceptionVector,text,XCHAL_USER_VECTOR_VADDR,FOLLOWING(.UserExceptionVector.literal))
+  SECTION_VECTOR(DoubleExceptionVector,literal,XCHAL_DOUBLEEXC_VECTOR_VADDR-8,FOLLOWING(.UserExceptionVector.text))
+  SECTION_VECTOR(DoubleExceptionVector,text,XCHAL_DOUBLEEXC_VECTOR_VADDR,FOLLOWING(.DoubleExceptionVector.literal))
 
   . = ALIGN(4096);
 
@@ -79,6 +79,23 @@ SECTIONS
     RELOCATE1(data);
     __boot_reloc_table_end = ABSOLUTE(.);
   }
+
+  __monitor_start = LOADADDR(.ResetVector.text);
+  __monitor_end = LOADADDR(.reloc.data) + SIZEOF(.reloc.data);
+
+  /*
+   * On many Xtensa boards a region of RAM may be mapped to the ROM address 
+   * space to facilitate on-chip-debug, and U-Boot must fit with that region.
+   * The config variables CFG_MONITOR_* define the region. If U-Boot extends
+   * beyond this * region it will appear discontiguous in the address space
+   * and is in danger of overwriting itself during unpacking ("relocation").
+   * This causes U-Boot to crash in a way that is difficult to debug. On some
+   * boards (such as xtav60) the region is small enough that U-Boot will not
+   * fit if compiled entirely with -O0 (a common scenario). To avoid a lengthy
+   * debugging session when this happens, ensure a link-time error occurs.
+   */
+   ASSERT(__monitor_end - __monitor_start <= CFG_MONITOR_LEN,
+          "U-Boot ROM image is too large. Check optimization level.")
 
   SECTION_xtensa
   SECTION_debug
