@@ -23,7 +23,6 @@
 #include <common.h>
 #include <asm/stringify.h>
 
-
 #if XCHAL_HAVE_CCOUNT
 static ulong get_ccount(void)
 {
@@ -31,7 +30,27 @@ static ulong get_ccount(void)
 	asm volatile ("rsr %0,"__stringify(CCOUNT) : "=a" (ccount));
 	return ccount;
 }
+#else
+static ulong fake_ccount = 0;
+#define get_ccount() fake_ccount
 #endif
+
+static void delay_cycles(unsigned cycles)
+{
+#if XCHAL_HAVE_CCOUNT
+    unsigned expiry = get_ccount() + cycles;
+    while ((signed)(expiry - get_ccount()) > 0);
+#else
+#warning "Without Xtensa timer option, timing will not be accurate."
+    /*
+    Approximate the cycle count by a loop iteration count. 
+    This is highly dependent on config and optimization.
+    */
+    volatile unsigned i;
+    for (i = cycles>>3; i > 0; --i);
+    fake_ccount += cycles;
+#endif
+}
 
 /*
  * Delay (busy-wait) for a number of microseconds.
@@ -39,20 +58,15 @@ static ulong get_ccount(void)
 
 void udelay(unsigned long usec)
 {
-	ulong start, timer;
+	ulong lo, hi, i;
+        ulong mhz = CONFIG_SYS_CLK_FREQ / 1000000;
 
-#if !XCHAL_HAVE_CCOUNT
-	/*
-	 * Configs without timer option have to fake a timer for get_timer().
-	 * Timing will not be accurate, but hopefully nothing will hang.
-	 */
-#warning "Without Xtensa timer option, timing will not be accurate."
-#endif
-
-	start = get_ccount();
-	timer = (usec * (CONFIG_SYS_CLK_FREQ / 1000)) / 1000;
-	while (get_ccount() - start < timer)
-		;
+	/* Scale to support full 32-bit usec range */
+	lo = usec & ((1<<22)-1);
+	hi = usec >> 22UL;
+	for (i=0; i<hi; ++i)
+		delay_cycles(mhz << 22);
+	delay_cycles(mhz * lo);
 }
 
 
@@ -71,6 +85,9 @@ ulong get_timer(ulong base)
 	/*
 	 * Add at least the overhead of this call (in cycles).
 	 * Avoids hanging in case caller doesn't use udelay().
+         * Note that functions that don't call udelay() (such as
+         * the "sleep" command) will not get a significant delay 
+         * because there is no time reference.
 	 */
 	fake_ccount += 20;
 	return fake_ccount - base;
