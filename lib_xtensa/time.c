@@ -24,16 +24,18 @@
 #include <asm/stringify.h>
 
 
-/*
- * Delay (busy-wait)for a number of microseconds.
- */
-
+#if XCHAL_HAVE_CCOUNT
 static ulong get_ccount(void)
 {
 	ulong ccount;
 	asm volatile ("rsr %0,"__stringify(CCOUNT) : "=a" (ccount));
 	return ccount;
 }
+#endif
+
+/*
+ * Delay (busy-wait) for a number of microseconds.
+ */
 
 void udelay(unsigned long usec)
 {

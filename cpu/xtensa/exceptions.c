@@ -28,6 +28,7 @@
 
 #include <common.h>
 #include <command.h>
+#include <xtensa.h>
 #include <asm/string.h>
 #include <asm/regs.h>
 
@@ -71,7 +72,9 @@ handler_t exc_table[EXCCAUSE_LAST] = {
 
 void unhandled_exception(struct pt_regs *regs)
 {
+	display_printf("!! EXCCAUSE = %2d", regs->exccause);
 	printf("Unhandled Exception: EXCCAUSE = %d\n", regs->exccause);
+	udelay(10000000);	/* 10s to read display message */
 	panic("*** PANIC\n");
 }
 

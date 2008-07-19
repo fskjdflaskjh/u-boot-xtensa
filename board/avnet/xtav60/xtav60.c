@@ -37,7 +37,7 @@
 int checkboard (void)
 {
 	printf("Board:  XT-AV60: "
-	       "Avnet LX60 board with Tensilica FPGA bitstream\n");
+	       "Avnet board + Xilinx LX60 FPGA + Tensilica bitstream\n");
 	return 0;
 }
 

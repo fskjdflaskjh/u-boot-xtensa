@@ -305,7 +305,7 @@ void hang(void)
 	puts ("### ERROR ### Please RESET the board ###\n");
 
 	udelay(10000000);	/* 10s for user to read any existing message */
-	display_printf("Hung! Pls reset");
+	lcd_disp_at_pos("Hung! Pls reset", 0);	/* low level so usually works */
 
 	for (;;);
 }
