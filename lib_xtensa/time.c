@@ -42,12 +42,14 @@ static void delay_cycles(unsigned cycles)
     while ((signed)(expiry - get_ccount()) > 0);
 #else
 #warning "Without Xtensa timer option, timing will not be accurate."
+
     /*
     Approximate the cycle count by a loop iteration count. 
     This is highly dependent on config and optimization.
     */
+
     volatile unsigned i;
-    for (i = cycles>>3; i > 0; --i);
+    for (i = cycles >> 4U; i > 0; --i);
     fake_ccount += cycles;
 #endif
 }
@@ -62,6 +64,7 @@ void udelay(unsigned long usec)
         ulong mhz = CONFIG_SYS_CLK_FREQ / 1000000;
 
 	/* Scale to support full 32-bit usec range */
+
 	lo = usec & ((1<<22)-1);
 	hi = usec >> 22UL;
 	for (i=0; i<hi; ++i)
@@ -77,6 +80,7 @@ void udelay(unsigned long usec)
 ulong get_timer(ulong base)
 {
 	/* Don't tie up a timer; use cycle counter if available (or fake it). */
+
 #if XCHAL_HAVE_CCOUNT
 	register ulong ccount;
 	__asm__ volatile ("rsr %0, CCOUNT" : "=a"(ccount));
@@ -89,8 +93,9 @@ ulong get_timer(ulong base)
          * the "sleep" command) will not get a significant delay 
          * because there is no time reference.
 	 */
+
 	fake_ccount += 20;
-	return fake_ccount - base;
+	return fake_ccount / (CONFIG_SYS_CLK_FREQ / CFG_HZ) - base;
 #endif
 }
 
