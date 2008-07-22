@@ -46,7 +46,7 @@ Adding support for an additional board for Xtensa is not much different
 than for any other architecture. Because the processor variant is handled 
 differently for Xtensa than for other architectures, The MKCONFIG script 
 requires an additional parameter with the name of the processor configuration
-(cpuconfig). the rule in the main Makefile is, therefore, slightly different.
+(cpuconfig). The rule in the main Makefile is, therefore, slightly different.
 
 If the board only support one fixed processor configuration, the rule for
 the new board would look as follows.
@@ -58,7 +58,7 @@ myboard_config: unconfig
 In the above rule, 'myboard' describes the name of the new board and 
 'cpuconfig' the supported processor configuration.
 
-The make-command to configure U-Boot for that board only requires the 
+The make command to configure U-Boot for that board only requires the 
 name of the board followed by '_config': make myboard_config
 
 With some modification to the rule, U-Boot can be configured to any 
@@ -123,6 +123,27 @@ instruction to determine the stack frame size, and adjusting the stack
 pointer accordingly, then jumping into the target function just after
 the 'entry'.  Decoding depends on the processor's endianness so uses
 the HAL.  The implementation (12 instructions) is in examples/stubs.c .
+
+
+Access to Invalid Memory Addresses
+----------------------------------
+
+U-Boot does not check if memory addresses given as arguments to commands
+such as "md" are valid. The expectation appears to be that if the user
+requests to look at invalid memory he should expect to see garbage, and
+writes to invalid memory should be ignored.
+
+On many processors, and indeed many Xtensa configurations, this is
+acceptable. However on some configurations (particularly those with an
+MMU such as would be used with Linux) an exception is generated for an
+invalid memory access, which results in a hang if not handled.
+
+U-Boot for Xtensa provides a special memory exception handler to prevent
+hanging. The memory exception handler simply skips over the offending
+instruction. It is called for all memory exception causes that might
+be triggered by bad user input. While this is simplistic, it's better
+than hanging in most cases, while keeping U-Boot small and simple.
+
 
 ------------------------------------------------------------------------------
 Chris Zankel

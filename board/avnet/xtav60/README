@@ -1,5 +1,5 @@
-	Tensilica Avnet XTAV60 FPGA Evaluation Board
-	============================================
+	Tensilica Avnet XT-AV60 FPGA Evaluation Board
+	=============================================
 
 This board is the Xilinx Virtex-4 MB Development Kit from Avnet configured
 with an FPGA bitstream from Tensilica. The combination of the Avnet FPGA
@@ -17,12 +17,6 @@ The configured XT-AV60 board provides:
 
 Note the Avnet board contains a USB connector, but USB is not supported
 by the Tensilica bitstream so is effectively absent.
-
-The XT-AV60 is supported by Tensilica's Xtensa Tools and examples, where
-it is identified by the symbol 'xtav60'). U-Boot currently relies on the
-XTOS run-time libraries supplied with the Xtensa Tools. In the future 
-these dependencies will be removed and it will be possible to use the
-open-source Xtensa tools available from www.linux-xtensa.org .
 
 Please see doc/README-xtensa for information concerning the Xtensa
 architecture (of which Diamond cores are instances).
@@ -74,7 +68,7 @@ Default MAC Address (DIP switches 1-6):
     After initial startup, the MAC address is stored in the U-Boot
     environment variable 'ethaddr'. The user may change this to any
     other address with the "setenv" comamnd. After the environment
-    has been saved to Flash by the "saveaddr" command, this will be
+    has been saved to Flash by the "saveenv" command, this will be
     used and the DIP switches no longer consulted. DIP swithes 1-6
     may then be used for application purposes.
 
@@ -98,5 +92,10 @@ debugged, because the image can still fit into the 128 KB SRAM.
 The recommended procedure for debugging is to first build U-Boot
 with the default optimization level (-Os), and then touch and 
 rebuild incrementally with -O0 so that only the touched sources
-are recompiled with -O0.
+are recompiled with -O0. To build with -O0, modify the top level
+config.mk and add '-O0' to the make variable OPTFLAGS.
+
+Because this problem is easy to fall into and difficult to debug
+if one doesn't expect it, the linker script provides a link-time
+check and fatal error message if the image size exceeds 128 KB.
 
