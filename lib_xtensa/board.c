@@ -177,18 +177,25 @@ static int init_flash(void)
  * Initialize ethernet environment variables and board info.
  * The 'board' initializer should have set the 'ethaddr' environment variable
  * to the correct value if nothing was specified. Otherwise, we use the
- * invalid ethernet address: 00-00-00-00-00-00.
+ * invalid ethernet address "00:00:00:00:00:00".
  */
 static int ethernet_setup(void)
 {
 	bd_t *bd = gd->bd;
-	char *s;
+	char *s, *e;
+        int i;
 
 	s = getenv("ethaddr");
 	if (s == 0) {
 		s = "00:00:00:00:00:00";
 		setenv("ethaddr", s);
 	}
+        for (i = 0; i < 6; ++i) {
+                bd->bi_enetaddr[i] = s ?
+                        simple_strtoul (s, &e, 16) : 0;
+                if (s)
+                        s = (*e) ? e + 1 : e;
+        }
 
 	puts("MAC:    ");
 	puts(s);
@@ -255,6 +262,8 @@ init_fnc_t *init_sequence[] = {
 
 void board_init_f(ulong data)
 {
+        char *s; 
+
 	/* 
 	 * All RAM sections have been unpacked to RAM (relocated) 
 	 * and the board has been initialized.
@@ -283,6 +292,16 @@ void board_init_f(ulong data)
 			hang ();
 		}
 	}
+
+	/* Initialize from environment */
+	if ((s = getenv ("loadaddr")) != NULL) {
+		load_addr = simple_strtoul (s, NULL, 16);
+	}
+#if defined(CONFIG_CMD_NET)
+	if ((s = getenv ("bootfile")) != NULL) {
+		copy_filename (BootFile, s, sizeof (BootFile));
+	}
+#endif
 
 	/* Announce our arrival and clock frequency */
 	display_printf("U-Boot %5s MHz", strmhz(mhz, gd->cpu_clk));
