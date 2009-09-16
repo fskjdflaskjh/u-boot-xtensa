@@ -938,5 +938,18 @@ Blackfin Team <u-boot-devel@blackfin.uclinux.org>
 	IBF-DSP561	BF561
 
 #########################################################################
+# Xtensa Systems:							#
+#									#
+# Maintainer Name, Email Address					#
+#	Board			CPU					#
+#########################################################################
+Pete Delaney <piet.delaney@tensilica.com>
+Ross Morley <ross@linux-xtensa.org>
+Chris Zankel <chris@zankel.net>
+
+	XTAV60			Xtensa
+	XTAV200			Xtensa
+
+#########################################################################
 # End of MAINTAINERS list						#
 #########################################################################

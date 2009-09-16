@@ -3,7 +3,7 @@
 # Script to create header files and links to configure
 # U-Boot for a specific board.
 #
-# Parameters:  Target  Architecture  CPU  Board [VENDOR] [SOC]
+# Parameters:  Target  Architecture  CPU  Board [VENDOR] [SOC] [VARIANT]
 #
 # (C) 2002-2006 DENX Software Engineering, Wolfgang Denk <wd@denx.de>
 #
@@ -23,7 +23,7 @@ done
 [ "${BOARD_NAME}" ] || BOARD_NAME="$1"
 
 [ $# -lt 4 ] && exit 1
-[ $# -gt 6 ] && exit 1
+[ $# -gt 7 ] && exit 1
 
 echo "Configuring for ${BOARD_NAME} board..."
 
@@ -59,6 +59,12 @@ fi
 if [ "$2" = "arm" ] ; then
 	rm -f asm-$2/proc
 	ln -s ${LNPREFIX}proc-armv asm-$2/proc
+fi
+
+if [ "$2" = "xtensa" ] ; then
+	rm -f asm-$2/variant
+	ln -s ${LNPREFIX}variant-$7 asm-$2/variant
+	echo "Configuring for $7 variant..."
 fi
 
 #

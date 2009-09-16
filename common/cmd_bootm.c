@@ -190,6 +190,8 @@ void arch_lmb_reserve(struct lmb *lmb) __attribute__((weak, alias("__arch_lmb_re
   #define IH_INITRD_ARCH IH_ARCH_SH
 #elif defined(__sparc__)
   #define IH_INITRD_ARCH IH_ARCH_SPARC
+#elif defined(__xtensa__)
+  #define IH_INITRD_ARCH IH_ARCH_XTENSA
 #else
 # error Unknown CPU type
 #endif

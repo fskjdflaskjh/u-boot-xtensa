@@ -185,6 +185,62 @@ gd_t *global_data;
 "	nop\n"						\
 	: : "i"(offsetof(gd_t, jt)), "i"(XF_ ## x) : "g1" );
 
+#elif defined(CONFIG_XTENSA)
+#ifdef __XTENSA_CALL0_ABI__
+/*
+ * Call0    ABI: Global data ptr is in a14, and a8 is clobberable scratch.
+ * Windowed ABI: Global data ptr is in global_data, jump table ptr is in jt.
+ *		 Jump just past 'entry' in target and adjust stack frame
+ *		 (extract stack frame size from target 'entry' instruction).
+ */
+#define EXPORT_FUNC(x) \
+	asm volatile (			\
+"	.globl " #x "\n"		\
+#x ":\n"				\
+"	l32i	a8, a14, %0\n"		\
+"	l32i	a8, a8,  %1\n"		\
+"	jx	a8\n"			\
+	: : "i"(offsetof(gd_t, jt)), "i"(XF_ ## x * sizeof(void *)) : "a8");
+#else /* !__XTENSA_CALL0_ABI__ (windowed ABI) */
+static gd_t *global_data;
+void **jt;		/* jt must have extern linkage for asm to see it */
+#if XCHAL_HAVE_BE
+# define SFT "8"
+#else
+# define SFT "12"
+#endif
+#define EXPORT_FUNC(x) \
+	asm volatile ("\n"			\
+"	.extern jt\n"				\
+"	.globl	" #x "\n"			\
+"	.align 4\n"				\
+#x ":\n"					\
+"	entry	sp,  16\n"			\
+"	movi	a8, jt\n"			\
+"	l32i	a8, a8, 0\n"			\
+"	l32i	a8, a8, %0\n"			\
+"	l32i	a9, a8, 0\n"			\
+"	extui	a9, a9, " SFT ", 12\n" 		\
+"	subx8	a9, a9, sp\n"			\
+"	movi	a10, 16\n"			\
+"	sub	a9, a10, a9\n"			\
+"	movsp	sp, a9\n"			\
+"	addi	a8, a8, 3\n"			\
+"	jx	a8\n"				\
+	: : "i"(XF_ ## x * sizeof(void *)));
+#endif /* __XTENSA_CALL0_ABI__ */
+
+/*
+ * Provide an entrypoint at the very base of the binary image that jumps over
+ * the literals, so the "go" command can use the base of the image and it is
+ * not necessary to document a magic start address that varies per core config.
+ */
+__asm__ (
+"	.section .trampoline, \"ax\"\n"
+"	.align 4\n"
+"	j _main\n"
+"	.previous\n");
+
 #else
 #error stubs definition missing for this architecture
 #endif

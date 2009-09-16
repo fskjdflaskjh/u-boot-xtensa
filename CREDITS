@@ -347,6 +347,25 @@ N: Frank Morauf
 E: frank.morauf@salzbrenner.com
 D: Support for Embedded Planet RPX Super Board
 
+N: Ross Morley
+E: ross@linux-xtensa.org
+E: ross@computer.org
+D: Initial Port to Xtensa architecture
+D: Provided support for Avnet Xtensa Xtav60 board (board/avnet/xtav60)
+W: http://www.linux-xtensa.org
+
+N: Christian Zankel
+E: chris@zankel.net
+D: Updated Xtensa Port to use GPL linux-xtensa tools environment
+W: http://www.linux-xtensa.org
+
+N: Pete Delaney
+E: piet@linux-xtensa.org
+E: piet@tensilica.com
+D: Updated Xtensa port to support Avnet Xtav200 board (board/avnet/xtav200)
+D: Merged linux-xtensa.org git repo with latest public code; updated mboot code to new paradigm
+W: http://www.linux-xtensa.org
+
 N: David M?ller
 E: d.mueller@elsoft.ch
 D: Support for Samsung ARM920T SMDK2410 eval board
@@ -553,3 +572,6 @@ N: Philip Balister
 E: philip@opensdr.com
 D: Port to Lyrtech SFFSDR development board.
 W: www.opensdr.com
+
+//www.linux-xtensa.org
+

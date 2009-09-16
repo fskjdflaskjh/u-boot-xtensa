@@ -880,6 +880,22 @@ LIST_sh="		\
 
 LIST_sparc="gr_xc3s_1500	gr_cpci_ax2000	gr_ep2s60	grsim	grsim_leon2"
 
+
+#########################################################################
+## Xtensa Systems
+##
+## For Xtensa the search path to the variants compiler and tools needs
+## to be set up and we config with the variant name prefixed to the
+## the board name. Ex:
+##	make test_mmuhifi_c3_xtav200_config
+##
+#########################################################################
+
+LIST_xtensa="				\
+	test_mmuhifi_c3_xtav60		\
+	test_mmuhifi_c3_xtav200
+
+"
 #-----------------------------------------------------------------------
 
 #----- for now, just run PPC by default -----
@@ -917,6 +933,7 @@ do
 	|sh|sh2|sh3|sh4 \
 	|sparc \
 	|x86|I486 \
+	|xtensa \
 	)
 			for target in `eval echo '$LIST_'${arg}`
 			do

@@ -106,6 +106,7 @@
 #define IH_ARCH_BLACKFIN	16	/* Blackfin	*/
 #define IH_ARCH_AVR32		17	/* AVR32	*/
 #define IH_ARCH_ST200	        18	/* STMicroelectronics ST200  */
+#define IH_ARCH_XTENSA		19	/* Tensilica Xtensa */
 
 /*
  * Image Types
@@ -218,7 +219,7 @@ typedef struct bootm_headers {
 	const char	*fit_uname_rd;	/* init ramdisk subimage node unit name */
 	int		fit_noffset_rd;	/* init ramdisk subimage node offset */
 
-#if defined(CONFIG_PPC)
+#if 1 || defined(CONFIG_PPC)
 	void		*fit_hdr_fdt;	/* FDT blob FIT image header */
 	const char	*fit_uname_fdt;	/* FDT blob subimage node unit name */
 	int		fit_noffset_fdt;/* FDT blob subimage node offset */
@@ -477,6 +478,8 @@ static inline int image_check_target_arch (image_header_t *hdr)
 	if (!image_check_arch (hdr, IH_ARCH_SH))
 #elif defined(__sparc__)
 	if (!image_check_arch (hdr, IH_ARCH_SPARC))
+#elif defined(__xtensa__)
+	if (!image_check_arch (hdr, IH_ARCH_XTENSA))
 #else
 # error Unknown CPU type
 #endif
@@ -631,6 +634,8 @@ static inline int fit_image_check_target_arch (const void *fdt, int node)
 	if (!fit_image_check_arch (fdt, node, IH_ARCH_SH))
 #elif defined(__sparc__)
 	if (!fit_image_check_arch (fdt, node, IH_ARCH_SPARC))
+#elif defined(__xtensa__)
+	if (!fit_image_check_arch (fdt, node, IH_ARCH_XTENSA))
 #else
 # error Unknown CPU type
 #endif

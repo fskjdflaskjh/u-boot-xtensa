@@ -161,6 +161,14 @@ export	ARCH CPU BOARD VENDOR SOC
 # set default to nothing for native builds
 ifeq ($(HOSTARCH),$(ARCH))
 CROSS_COMPILE ?=
+else
+ifeq ($(ARCH),xtensa)
+ifeq ($(VARIANT),)
+CROSS_COMPILE = xtensa-linux-
+else
+CROSS_COMPILE = xtensa_$(VARIANT)-linux-
+endif	# VARIANT
+endif	# xtensa
 endif
 
 # load other configuration
@@ -435,13 +443,13 @@ TAG_SUBDIRS += drivers/video
 
 tags ctags:
 		ctags -w -o $(obj)ctags `find $(SUBDIRS) $(TAG_SUBDIRS) \
-						-name '*.[ch]' -print`
+						-name '*.[chS]' -print`
 
 etags:
 		etags -a -o $(obj)etags `find $(SUBDIRS) $(TAG_SUBDIRS) \
-						-name '*.[ch]' -print`
+						-name '*.[chS]' -print`
 cscope:
-		find $(SUBDIRS) $(TAG_SUBDIRS) -name '*.[ch]' -print \
+		find $(SUBDIRS) $(TAG_SUBDIRS) -name '*.[chS]' -print \
 						> cscope.files
 		cscope -b -q -k
 
@@ -3684,6 +3692,22 @@ grsim_config : unconfig
 # Gaisler LEON2 GRSIM simulator
 grsim_leon2_config : unconfig
 	@$(MKCONFIG) $(@:_config=) sparc leon2 grsim_leon2 gaisler
+
+#========================================================================
+# XTENSA
+#========================================================================
+#########################################################################
+## Avnet FPGA eval boards with Tensilica supplied FPGA configurations
+			
+%xtav60_config: unconfig
+	$(MKCONFIG) -a xtav60 xtensa xtensa xtav60 avnet NULL $(*:_=)
+	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk
+	echo "export VARIANT" >> $(obj)include/config.mk
+	
+%xtav200_config: unconfig
+	$(MKCONFIG) -a xtav200 xtensa xtensa xtav200 avnet NULL $(*:_=)
+	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk	
+	echo "export VARIANT" >> $(obj)include/config.mk
 
 #########################################################################
 #########################################################################

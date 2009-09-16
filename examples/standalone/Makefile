@@ -139,6 +139,12 @@ SREC	+= eepro100_eeprom.srec
 BIN	+= eepro100_eeprom.bin
 endif
 
+ifeq ($(ARCH),xtensa)
+LOAD_ADDR := "\#include <config.h>\\nCFG_LOAD_ADDR"
+LOAD_ADDR := $(shell echo -e $(LOAD_ADDR) | $(CPP) $(CPPFLAGS) -E -P -)
+LOAD_ADDR := $(shell printf "0x%08x" `expr $$[$(LOAD_ADDR)]`) -T xtensa.lds
+endif
+
 ifeq ($(BIG_ENDIAN),y)
 EX_LDFLAGS += -EB
 endif
