@@ -105,6 +105,8 @@
 #define CONFIG_SYS_OETH_REG_BASE	IOADDR(0x0D030000) /* Register base */
 #define CONFIG_SYS_OETH_BD_BASE	IOADDR(0x0D030400) /* Buffer descriptors base */
 #define CONFIG_SYS_OETH_BUFF_ADDR	IOADDR(0x0D800000) /* Buffer base */
+#define CONFIG_NET_MULTI				/* Soon to be manditory */
+#define CONFIG_NET_DO_NOT_TRY_ANOTHER
 
 /*=====================*/
 /* Flash & Environment */
@@ -123,9 +125,16 @@
 #define CONFIG_SYS_FLASH_PROTECTION			/* hardware flash protection */
 #define CONFIG_SYS_FLASH_BASE		IOADDR(0x08000000)	/* flash uncached base addr */
 #define CONFIG_SYS_FLASH_TOP		(CONFIG_SYS_FLASH_BASE + CONFIG_SYS_FLASH_SIZE)
+
 /* U-Boot monitor lives at the base of flash where it's mapped to ROM area */
 #define CONFIG_SYS_MONITOR_BASE	CONFIG_SYS_FLASH_BASE	/* Image lives at flash base */
-#define CONFIG_SYS_MONITOR_LEN		((128 << 10)*4)	/* limit to 4 of the 128KB sectors */
+
+/* 
+ * Currently 2 Flash sectors, 256K, is sufficient to fit u-boot on the LX200
+ * even when compiled -O0. Checked in cpu linker script.
+ */
+#define CONFIG_SYS_MONITOR_LEN		(256 << 10)     /* monitor  size 256KB */
+
 /* Put env. in top block (allows simple driver and avoids mangled memory map) */
 /* Another option would be to put env. in 2nd param block offs 8KB, size 8KB */
 #define CONFIG_ENV_IS_IN_FLASH				/* environment is in Flash */
@@ -176,7 +185,7 @@
 #define CONFIG_SYS_TEXT_BASE		(CONFIG_SYS_HEAP_BASE - CONFIG_SYS_MONITOR_LEN)
 
 /* Linux boot params area in RAM (used only when booting linux) */
-#define CONFIG_SYS_BOOTPARAMS_LEN	(64  << 10)	/* linux boot param area size */
+#define CONFIG_SYS_BOOTPARAMS_LEN	(64  << 10)	/* linux boot param area size 64KB */
 #define CONFIG_SYS_BOOTPARAMS_BASE	(CONFIG_SYS_TEXT_BASE - CONFIG_SYS_BOOTPARAMS_LEN)
 
 /* U-Boot initial RAM area before it unpacks itself (not used in this port). */

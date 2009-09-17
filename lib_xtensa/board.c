@@ -173,6 +173,18 @@ static int init_flash(void)
 #endif /* CONFIG_SYS_NO_FLASH */
 
 #ifdef CONFIG_CMD_NET
+
+#ifdef CONFIG_NET_MULTI
+int board_eth_init(bd_t *bis)
+{
+	int rc = 0;
+
+	rc = oeth_initialize(bis);
+
+	return rc;
+}
+#endif
+
 /*
  * Initialize ethernet environment variables and board info.
  * The 'board' initializer should have set the 'ethaddr' environment variable
@@ -190,16 +202,22 @@ static int ethernet_setup(void)
 		s = "00:00:00:00:00:00";
 		setenv("ethaddr", s);
 	}
-        for (i = 0; i < 6; ++i) {
-                bd->bi_enetaddr[i] = s ?
-                        simple_strtoul (s, &e, 16) : 0;
-                if (s)
-                        s = (*e) ? e + 1 : e;
-        }
-
 	puts("MAC:    ");
 	puts(s);
 	putc('\n');
+
+	/*
+	 * Convert from a string, like "00:50:C2:13:6f:0", 
+	 * to an array of 6 bytes to go into bi_enetaddr[].
+	 */
+        for (i = 0; i < 6; ++i) {
+                bd->bi_enetaddr[i] = s ?
+                        simple_strtoul (s, &e, 16) : 0;
+
+		/* Advance 's' to byte after ':' */
+                if (s)
+                        s = (*e) ? e + 1 : e;
+        }
 
 	s = getenv("ipaddr");
 	bd->bi_ip_addr = string_to_ip(s);
@@ -208,6 +226,10 @@ static int ethernet_setup(void)
 		puts(s);
 		putc('\n');
 	}
+
+#ifdef CONFIG_NET_MULTI
+	eth_initialize(bd);
+#endif
 	return 0;
 }
 #endif /* CONFIG_CMD_NET */
@@ -271,7 +293,6 @@ void board_init_f(ulong data)
 	init_fnc_t **init_fnc_ptr;
 	bd_t *bd;
 	ulong heap = CONFIG_SYS_HEAP_BASE;
-	char mhz[8];
 
 	gd = (gd_t *)(heap - sizeof(gd_t));
 	memset((void *)gd, 0, sizeof(gd_t));
@@ -306,8 +327,12 @@ void board_init_f(ulong data)
 #endif
 
 #ifdef CONFIG_SYS_ASCDISP
-	/* Announce our arrival and clock frequency */
-	display_printf("U-Boot %5s MHz", strmhz(mhz, gd->cpu_clk));
+	{
+		char mhz[8];
+
+		/* Announce our arrival and clock frequency */
+		display_printf("U-Boot %5s MHz", strmhz(mhz, gd->cpu_clk));
+	}
 #endif
 
 	while(1) 

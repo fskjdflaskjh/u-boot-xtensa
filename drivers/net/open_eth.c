@@ -96,10 +96,12 @@
 
 #define debug_print 
 
-extern int eth_init(bd_t * bd);
+#ifndef CONFIG_NET_MULTI
+extern int eth_init(bd_t *bd);
 extern void eth_halt(void);
 extern int eth_rx(void);
-extern int eth_senf(volatile void * packet, int length);
+extern int eth_send(volatile void *packet, int length);
+#endif
 
 static volatile oeth_bd * tx_bd;
 static volatile oeth_bd * rx_bd;
@@ -147,7 +149,11 @@ static void mdio_write(volatile oeth_regs * regs, int phy, int loc, int val)
   return;
 }
 
-int eth_init(bd_t * bd)
+#ifdef CONFIG_NET_MULTI
+static int oeth_init(struct eth_device *dev, bd_t *bd)
+#else
+int eth_init(bd_t *bd)
+#endif
 {
   int i;
   unsigned long rxmem_addr = OETH_RXBUFF_ADDR;
@@ -234,11 +240,20 @@ int eth_init(bd_t * bd)
   return 0;
 }
 
-void eth_halt()
+#ifdef CONFIG_NET_MULTI
+void oeth_halt(struct eth_device *dev)
+#else
+void eth_halt(void)
+#endif
 {
 }
 
-int eth_rx()
+
+#ifdef CONFIG_NET_MULTI
+static int oeth_rcv_packet(struct eth_device *dev)
+#else
+int eth_rx(void)
+#endif
 {
   volatile oeth_bd * bdp = rx_bd + rx_next;
   u32 len_status = bdp->len_status;
@@ -278,7 +293,11 @@ int eth_rx()
   return packet_size;
 }
 
+#ifdef CONFIG_NET_MULTI
+static int oeth_send_packet(struct eth_device *dev, volatile void * packet, int length)
+#else
 int eth_send(volatile void * packet, int length)
+#endif
 {
   int sent = 0;
 
@@ -316,3 +335,28 @@ int eth_send(volatile void * packet, int length)
 
   return sent;
 }
+
+struct eth_device oeth_device;
+#ifdef CONFIG_NET_MULTI
+int oeth_initialize(bd_t *bis)
+
+{
+	struct eth_device *dev = &oeth_device;
+
+	memset(dev, 0, sizeof *dev);
+
+	/* Copy MAC address from bis to dev */
+	memcpy(dev->enetaddr, bis->bi_enetaddr, 6);
+
+	dev->iobase = 0;
+	dev->init = oeth_init;
+	dev->halt = oeth_halt;
+	dev->send = oeth_send_packet;
+	dev->recv = oeth_rcv_packet;
+
+	sprintf(dev->name, "open_ethernet");
+
+	eth_register(dev);
+	return(1);
+}
+#endif

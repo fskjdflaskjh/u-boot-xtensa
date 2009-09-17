@@ -85,7 +85,7 @@ static struct bp_tag *setup_commandline_tag(struct bp_tag *params,char *cmdline)
 	params->size = (len + 3) & -4;
 	strcpy ((char*) params->data, cmdline);
 
-	printf("   COMMAND_LINE:    tag:0x%04lx, size:%u, data:'%s'\n", 
+	printf("   COMMAND_LINE:    tag:0x%04x, size:%u, data:'%s'\n", 
 			BP_TAG_COMMAND_LINE, params->size, cmdline);
 
 	return bp_tag_next(params);
@@ -110,7 +110,7 @@ static struct bp_tag *setup_ramdisk_tag(struct bp_tag *params,
 	mem->start = PHYSADDR(rd_start);
 	mem->end = PHYSADDR(rd_end);
 
-	printf("   INITRD: tag:0x%lx, type:0X%04lx, start:0X%lx, end:0X%lx\n",
+	printf("   INITRD: tag:0x%x, type:0X%04lx, start:0X%lx, end:0X%lx\n",
 	      	BP_TAG_INITRD,   mem->type,  mem->start,  mem->end);
 
 	return bp_tag_next(params);
@@ -122,7 +122,7 @@ static struct bp_tag *setup_serial_tag(struct bp_tag *params)
 	params->size = sizeof (unsigned long);
 	params->data[0] = gd->baudrate;
 
-	printf("   SERIAL_BAUDRATE: tag:0x%04lx, size:%u, baudrate:%lu\n", BP_TAG_SERIAL_BAUDRATE, params->size, params->data[0]);
+	printf("   SERIAL_BAUDRATE: tag:0x%04x, size:%u, baudrate:%lu\n", BP_TAG_SERIAL_BAUDRATE, params->size, params->data[0]);
 
 	return bp_tag_next(params);
 }

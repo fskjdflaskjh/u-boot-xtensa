@@ -89,6 +89,13 @@ saveenv command from saving it's data in the flash.
 Using u-boot to boot Linux
 --------------------------
 
+While debugging u-boot you likely should modify $(TOPDIR)/config.mk
+with:
+	DBGFLAGS= -g
+	OPTFLAGS= -O0
+
+Note that -g3 seems to mess up the CPP on the cpu linkerscript.
+
 Once u-boot has been compiled you likely want to:
 
   1. Copy tools/mkimage ~/bin to make it available to 

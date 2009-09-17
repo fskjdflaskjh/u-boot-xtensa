@@ -31,7 +31,7 @@ OBJS	:= $(addprefix $(obj),$(COBJS-y) $(SOBJS-y))
 
 all:	$(obj).depend $(LIB) $(obj)u-boot.lds
 
-$(obj)u-boot.lds: u-boot.lds.S
+$(obj)u-boot.lds: u-boot.lds.S  $(TOPDIR)/include/autoconf.mk
 	$(CPP) -P -C $(CPPFLAGS) -U$(ARCH) $< > $@
 
 $(LIB):	$(OBJS)

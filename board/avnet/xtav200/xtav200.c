@@ -64,12 +64,10 @@ int misc_init_f(void)
 	return 0;
 }
 
-
 /*
  *  Miscellaneous late initializations.
  *  The environment has been set up, so we can set the Ethernet address.
  */
-
 int misc_init_r(void)
 {
 #ifdef CONFIG_CMD_NET
@@ -77,25 +75,24 @@ int misc_init_r(void)
 	 * Initialize ethernet environment variables and board info.
 	 * Default MAC address comes from CONFIG_ETHADDR + DIP switches 1-6.
 	 */
-
 	char *s = getenv("ethaddr");
 	if (s == 0) {
 		unsigned int x;
+
 		s = __stringify(CONFIG_ETHBASE);
 		x = (*(volatile u32 *) CONFIG_SYS_FPGAREG_DIPSW) & FPGAREG_MAC_MASK;
 		sprintf(&s[15], "%02x", x);
+
 		setenv("ethaddr", s);
 	}
 #endif /* CONFIG_CMD_NET */
-
 	return 0;
 }
 
 #ifdef CONFIG_SHOW_BOOT_PROGRESS
-/* Display a boot progress number on the tty. */
+/* Display a boot progress number - LEDs? */
 void show_boot_progress(int val)
 {
-	printf("Progress = %d", val);
 }
 #endif
 

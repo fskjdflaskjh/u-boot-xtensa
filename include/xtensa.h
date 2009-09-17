@@ -27,6 +27,7 @@
 
 #include <stdarg.h>
 #include <config.h>
+#include <asm/u-boot.h>
 
 /* Much of this is not specific to Xtensa and should move to a common header. */
 
@@ -43,8 +44,14 @@
  * String may have embedded newlines. Starts at top left and wraps long lines.
  */
 extern void display_printf(const char *fmt, ...);
+extern void lcd_disp_at_pos(char *, unsigned char);
 #else
 #define display_printf(fmt, args)
 #endif
+
+#ifdef CONFIG_NET_MULTI
+extern int oeth_initialize(bd_t *);
+#endif
+
 
 #endif /* _XTENSA_H_ */

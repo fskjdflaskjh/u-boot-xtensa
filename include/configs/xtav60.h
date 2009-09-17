@@ -108,6 +108,8 @@
 #define CONFIG_SYS_OETH_REG_BASE	IOADDR(0x0D030000) /* Register base */
 #define CONFIG_SYS_OETH_BD_BASE	IOADDR(0x0D030400) /* Buffer descriptors base */
 #define CONFIG_SYS_OETH_BUFF_ADDR	IOADDR(0x0D800000) /* Buffer base */
+#define CONFIG_NET_MULTI				/* Soon to be manditory */
+#define CONFIG_NET_DO_NOT_TRY_ANOTHER
 
 /*=====================*/
 /* Flash & Environment */
@@ -127,7 +129,13 @@
 #define CONFIG_SYS_FLASH_TOP		(CONFIG_SYS_FLASH_BASE + CONFIG_SYS_FLASH_SIZE)
 /* U-Boot monitor lives at the base of flash where it's mapped to ROM area */
 #define CONFIG_SYS_MONITOR_BASE	CONFIG_SYS_FLASH_BASE	/* Image lives at flash base */
-#define CONFIG_SYS_MONITOR_LEN		(128 << 10)	/* must fit in SRAM for OCD */
+
+ /* 
+ * u-boot must fit in 128K (0x20000), size of of SRAM, 
+ * when running under for OCD; ie: 2 FLASH Sectors 
+ */
+#define CONFIG_SYS_MONITOR_LEN		(128 << 10)	/* monitor  size 128KB */
+
 /* Put env. in top block (allows simple driver and avoids mangled memory map) */
 /* Another option would be to put env. in 2nd param block offs 8KB, size 8KB */
 #define CONFIG_ENV_IS_IN_FLASH				/* environment is in Flash */
@@ -169,8 +177,10 @@
 #define CONFIG_SYS_MEMTEST_START	MEMADDR(0x001000000)	/* memtest start addr */
 #define CONFIG_SYS_MEMTEST_END		MEMADDR(0x002000000)	/* memtest end addr+1 */
 
-#define CONFIG_SYS_MEMORY_ADDR		MEMADDR(0x00000000)
-#define CONFIG_SYS_MEMORY_SIZE		0x04000000
+#define CONFIG_SYS_SDRAM_BASE		0x00000000		/* PHYSICAL Address */
+#define CONFIG_SYS_SDRAM_SIZE		0x04000000		/*  64 MB  */
+#define CONFIG_SYS_MEMORY_ADDR		MEMADDR(0x00000000)	/* VIRTUAL Address */
+#define CONFIG_SYS_MEMORY_SIZE		0x04000000		/*  64 MB  */
 #define CONFIG_SYS_LOAD_ADDR		MEMADDR(0x02000000)
 #define CONFIG_SYS_MEMORY_TOP		(CONFIG_SYS_MEMORY_BASE + CONFIG_SYS_MEMORY_SIZE)
 

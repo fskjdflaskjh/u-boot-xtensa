@@ -202,7 +202,7 @@ gd_t *global_data;
 "	jx	a8\n"			\
 	: : "i"(offsetof(gd_t, jt)), "i"(XF_ ## x * sizeof(void *)) : "a8");
 #else /* !__XTENSA_CALL0_ABI__ (windowed ABI) */
-static gd_t *global_data;
+/* static gd_t *global_data; */
 void **jt;		/* jt must have extern linkage for asm to see it */
 #if XCHAL_HAVE_BE
 # define SFT "8"
