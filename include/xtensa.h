@@ -49,9 +49,6 @@ extern void lcd_disp_at_pos(char *, unsigned char);
 #define display_printf(fmt, args)
 #endif
 
-#ifdef CONFIG_NET_MULTI
 extern int oeth_initialize(bd_t *);
-#endif
-
 
 #endif /* _XTENSA_H_ */

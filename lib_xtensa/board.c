@@ -174,7 +174,6 @@ static int init_flash(void)
 
 #ifdef CONFIG_CMD_NET
 
-#ifdef CONFIG_NET_MULTI
 int board_eth_init(bd_t *bis)
 {
 	int rc = 0;
@@ -183,7 +182,6 @@ int board_eth_init(bd_t *bis)
 
 	return rc;
 }
-#endif
 
 /*
  * Initialize ethernet environment variables and board info.
@@ -227,9 +225,8 @@ static int ethernet_setup(void)
 		putc('\n');
 	}
 
-#ifdef CONFIG_NET_MULTI
 	eth_initialize(bd);
-#endif
+
 	return 0;
 }
 #endif /* CONFIG_CMD_NET */

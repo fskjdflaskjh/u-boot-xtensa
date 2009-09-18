@@ -884,16 +884,41 @@ LIST_sparc="gr_xc3s_1500	gr_cpci_ax2000	gr_ep2s60	grsim	grsim_leon2"
 #########################################################################
 ## Xtensa Systems
 ##
+## Xtensa CPUs are configured by their customers. Customers will 
+## typically configure cores with a base instruction set, say dc232b,
+## and then add product specific TIE instructions to implement extended
+## instructions to do things like AES Encryption, DTS Audio Processing,
+## and digital signal processing (Ex: FFT). For more see:
+##
+##	http://www.tensilica.com/products/xtensa-customizable.htm
+##
 ## For Xtensa the search path to the variants compiler and tools needs
-## to be set up and we config with the variant name prefixed to the
-## the board name. Ex:
+## to be set up and we then configure u-boot with the variant name 
+## prefixed to the the board name. Ex:
+##
+##	make dc232b_xtav200_config
 ##	make test_mmuhifi_c3_xtav200_config
+##
+## To facilate this here just, set environment variable $VARIANT 
+## which describes your SOC core.
+##
+## EX:
+##	setenv VARIANT dc232b
+##	setenv VARIANT fsf
+##
+## List include/asm-xtensa/variant-* for list of standard variants.
+##
+## For example, to build both the xtav60 and xtav200 boards for the
+## DTS Audio (hifi-2) three core variant:
+##
+##	setenv VARIANT test_mmuhifi_c3
+##	./MAKEALL xtensa
 ##
 #########################################################################
 
 LIST_xtensa="				\
-	test_mmuhifi_c3_xtav60		\
-	test_mmuhifi_c3_xtav200
+	${VARIANT}_xtav60		\
+	${VARIANT}_xtav200
 
 "
 #-----------------------------------------------------------------------
