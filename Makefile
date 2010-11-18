@@ -3709,6 +3709,11 @@ grsim_leon2_config : unconfig
 	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk	
 	echo "export VARIANT" >> $(obj)include/config.mk
 
+%xtav110_config: unconfig
+	$(MKCONFIG) -a xtav110 xtensa xtensa xtav110 avnet NULL $(*:_=)
+	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk	
+	echo "export VARIANT" >> $(obj)include/config.mk
+
 #########################################################################
 #########################################################################
 #########################################################################

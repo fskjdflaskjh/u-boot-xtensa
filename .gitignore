@@ -13,7 +13,7 @@
 *~
 *.swp
 *.patch
-core.*
+# core.*
 
 #
 # Top-level generic files
@@ -40,6 +40,25 @@ core.*
 /LOG
 /errlog
 /reloc_off
+*.expand
+*.sibling
+*.locators
+*.initvals
+*.unshare
+*.vregs
+*.jump
+*.life1
+*.life2
+*.split1
+*.split3
+*.lreg
+*.greg
+*.flow
+*.flow2
+*.elnotes
+*.barriers
+*.shorten
+*.eh-ranges
 
 # stgit generated dirs
 patches-*

@@ -61,6 +61,10 @@ _ResetVector:
 	j	1f
 	.align 4
 2:	.long	_start
+	.byte   0Xff
+	.byte   0Xff
+	.byte   0Xff
+	.byte   0Xff
 
 1:	l32r	a2, 2b
 	jx	a2
@@ -74,7 +78,6 @@ _ResetVector:
 	.global _start
 	.align	16
 _start:
-
 	/* Keep a0 = 0 for various initializations. */
 
 	movi	a0, 0
@@ -105,6 +108,15 @@ _start:
 	movi	a3, 1
 	wsr	a0, WINDOWBASE
 	wsr	a3, WINDOWSTART
+#endif
+
+#
+# Vecbase in bitstream may differ from header files
+# set or check it.
+#
+#if XCHAL_HAVE_VECBASE
+	movi	a3, XCHAL_VECBASE_RESET_VADDR	/* VECBASE reset value */
+	wsr	a3, VECBASE
 #endif
 
 	/* Disable loops. */
@@ -196,7 +208,9 @@ _start:
 
 	/* Setup stack, PS.WOE = 1, PS.EXCM = 0, PS.INTLEVEL = EXCM level. */
 
-	movi	a1, __stack
+	movi	a1, __stack			# Top Of Stack. $a0 == 0 (set above), thus terminating stack.
+	addi    a1, a1, -16 - 4			# Leave space to save 4 registers for the following call4
+						# NOTE: reserve 32 if you change the call4 to a call8.
 #if XCHAL_HAVE_XEA1
 	movi	a2, (1<<PS_WOE_BIT) | 1
 #elif __XTENSA_CALL0_ABI__

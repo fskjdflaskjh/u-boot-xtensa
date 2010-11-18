@@ -918,6 +918,7 @@ LIST_sparc="gr_xc3s_1500	gr_cpci_ax2000	gr_ep2s60	grsim	grsim_leon2"
 
 LIST_xtensa="				\
 	${VARIANT}_xtav60		\
+	${VARIANT}_xtav110		\
 	${VARIANT}_xtav200
 
 "

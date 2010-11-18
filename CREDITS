@@ -363,6 +363,7 @@ N: Pete Delaney
 E: piet@linux-xtensa.org
 E: piet@tensilica.com
 D: Updated Xtensa port to support Avnet Xtav200 board (board/avnet/xtav200)
+D: Updated Xtensa port to support Avnet Xtav110 board (board/avnet/xtav110)
 D: Merged linux-xtensa.org git repo with latest public code; updated mboot code to new paradigm
 W: http://www.linux-xtensa.org
 
