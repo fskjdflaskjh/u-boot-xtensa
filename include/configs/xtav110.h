@@ -228,10 +228,7 @@
 /*==============================*/
 /* U-Boot autoboot configuration */
 /*==============================*/
-#ifdef DEBUG
-#define CONFIG_BOOTDELAY	-1	/* autoboot disabled while debugging */
-#else
-#define CONFIG_BOOTDELAY	20	/* enable autoboot after 20 seconds */
+#define CONFIG_BOOTDELAY	10	/* enable autoboot after 10 seconds */
 #define CONFIG_BOOT_RETRY_TIME 60	/* retry autoboot after 60 secs	*/
 #define CONFIG_BOOT_RETRY_MIN	1	/* can go down to 1 second timeout */
 /* 
@@ -244,7 +241,6 @@
 #define CONFIG_AUTOBOOT_STOP_STR	" "
 #undef CONFIG_AUTOBOOT_DELAY_STR
 #define DEBUG_BOOTKEYS		0
-#endif
 
 						
 #define CONFIG_VERSION_VARIABLE

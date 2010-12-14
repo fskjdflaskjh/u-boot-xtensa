@@ -1,0 +1,81 @@
+file  u-boot-lx60
+target remote localhost:20000 0
+reset
+monitor trace off
+monitor verify all off
+load
+monitor verify all on
+break panic
+dir lib_xtensa
+dir board/avnet/xtav110
+dir drivers/input
+dir cpu/xtensa
+
+#
+# Set Exception Vectors once code has been copied there.
+#
+set var $debug_exceptions = 1
+if $debug_exceptions
+    break _reset
+    set var $_reset = $bpnum
+    commands $_reset
+	break *&_KernelExceptionVector	
+	break *&_UserExceptionVector	
+	break *&_DoubleExceptionVector
+	break *&ExceptionHandler
+    end
+end
+
+set var $debug_window_exceptions = 0
+if $debug_window_exceptions
+    break _reset
+    set var $_reset = $bpnum
+    commands $_reset
+	break *&_WindowOverflow4
+	break *&_WindowOverflow8
+	break *&_WindowOverflow12
+	break *&_WindowUnderflow4
+	break *&_WindowUnderflow8
+	break *&_WindowUnderflow12
+    end
+end
+
+#
+# Startup Routines, usefull to enable
+# when bringing up U-Boot to a new VARIANT
+# or a new board.
+#
+set var $debug_startup = 0
+if $debug_startup
+    break board_init_f
+    break env_init
+    break misc_init_f
+    break lcd_init
+    break lcd_disp_at_pos
+    break init_baudrate
+    break serial_init
+    break calc_divisor
+    break NS16550_init
+    break console_init_f
+    break display_options
+    break printf
+    break puts
+    break serial_puts
+    break NS16550_putc
+    source showtlb.gdb
+end
+
+#
+# Enable this if you want to place breakpoint
+# in the Linux Kernel before it's executed by
+# U-Boot.
+#
+set var $debug_bootm = 1
+if $debug_bootm
+    break do_bootm_linux
+    break do_bootm
+    break bootm_load_os
+    break gunzip
+    break zunzip
+end	
+

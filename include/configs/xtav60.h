@@ -200,13 +200,30 @@
 /*==============================*/
 #undef	CONFIG_USE_IRQ					/* Keep it simple, poll only */
 #define CONFIG_MISC_INIT_R
-#undef	CONFIG_BOOTDELAY
 #define CONFIG_BOOTFILE			"uImage"	/* Boot file name */
 #define CONFIG_SYS_PROMPT		"U-Boot> "	/* Monitor Command Prompt */
 #define CONFIG_SYS_CBSIZE		1024		/* Console I/O Buffer Size  */
 #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE+sizeof(CONFIG_SYS_PROMPT)+16) /* Prt buf */
 #define CONFIG_SYS_MAXARGS		16		/* max number of command args */
 #define CONFIG_SYS_BARGSIZE		CONFIG_SYS_CBSIZE	/* Boot Argument Buffer Size */
+
+/*==============================*/
+/* U-Boot autoboot configuration */
+/*==============================*/
+#define CONFIG_BOOTDELAY        10      /* enable autoboot after 10 seconds */
+#define CONFIG_BOOT_RETRY_TIME 60       /* retry autoboot after 60 secs */
+#define CONFIG_BOOT_RETRY_MIN   1       /* can go down to 1 second timeout */
+/*
+ *  * Be selective on what keys can delay or stop the autoboot process
+ *   *      To stop use: " "
+ *    */
+#define CONFIG_AUTOBOOT_KEYED
+#define CONFIG_AUTOBOOT_PROMPT          "Autobooting in %d seconds, " \
+                                        "press <SPACE> to stop\n", bootdelay
+#define CONFIG_AUTOBOOT_STOP_STR        " "
+#undef CONFIG_AUTOBOOT_DELAY_STR
+#define DEBUG_BOOTKEYS          0
+
 						
 #define CONFIG_VERSION_VARIABLE
 #define CONFIG_AUTO_COMPLETE				/* Support tab autocompletion */
