@@ -91,7 +91,7 @@
 #define CONFIG_SYS_NS16550
 #define CONFIG_SYS_NS16550_SERIAL
 #define CONFIG_SYS_NS16550_REG_SIZE	-4		/* NS16550 register size */
-#define CONFIG_SYS_NS16550_COM1	IOADDR(0x0D050000) 	/* Base address of UART0 */
+#define CONFIG_SYS_NS16550_COM1	IOADDR(0x0D050020) 	/* Base address of UART0 */
 /* Input clk to NS16550 (in Hz; the SYS_CLK_FREQ is in kHz) */
 #define CONFIG_SYS_NS16550_CLK		CONFIG_SYS_CLK_FREQ
 #define CONFIG_CONS_INDEX	1			/* use UART0 for console */
