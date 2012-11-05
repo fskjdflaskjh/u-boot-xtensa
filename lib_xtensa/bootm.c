@@ -127,6 +127,20 @@ static struct bp_tag *setup_serial_tag(struct bp_tag *params)
 	return bp_tag_next(params);
 }
 
+#ifdef CONFIG_OF_LIBFDT
+
+static struct bp_tag *setup_fdt_tag(struct bp_tag *params, void *fdt_start)
+{
+	params->id = BP_TAG_FDT;
+	params->size = sizeof (unsigned long);
+	params->data[0] = (unsigned long)fdt_start;
+
+	printf("   FDT:             tag:0x%04x, size:%u, start:0x%lx\n", BP_TAG_FDT, params->size, params->data[0]);
+
+	return bp_tag_next(params);
+}
+
+#endif
 
 /*
  * Boot Linux.
@@ -177,6 +191,11 @@ int do_bootm_linux(int flag, int argc, char *argv[], bootm_headers_t *images)
 
 	if (initrd_start)
 		params = setup_ramdisk_tag(params, initrd_start, initrd_end);
+
+#ifdef CONFIG_OF_LIBFDT
+	if (images->ft_addr)
+		params = setup_fdt_tag(params, images->ft_addr);
+#endif
 
 	printf("\n");
 
