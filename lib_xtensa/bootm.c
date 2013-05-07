@@ -199,7 +199,7 @@ int do_bootm_linux(int flag, int argc, char *argv[], bootm_headers_t *images)
 "		mov	a3, %1		\n\t"
 "		jx	%2		\n\t"
 		: : "a" (params_start), "a" (params_start), "a" (theKernel)
-		: "memory");
+		: "a2", "a3", "memory");
 
 	/* Does not return */
 
