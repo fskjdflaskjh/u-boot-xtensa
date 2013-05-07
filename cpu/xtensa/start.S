@@ -105,8 +105,9 @@ _start:
 	/* Reset windowbase and windowstart. */
 
 #if XCHAL_HAVE_WINDOWED
-	movi	a3, 1
 	wsr	a0, WINDOWBASE
+	movi	a0, 0
+	movi	a3, 1
 	wsr	a3, WINDOWSTART
 #endif
 
