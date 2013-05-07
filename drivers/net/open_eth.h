@@ -146,8 +146,8 @@ typedef struct _oeth_bd {
 #define BMCR_RESET               0x8000
 
 /* Buffer number (must be 2^n)  */
-#define OETH_RXBD_NUM		16
-#define OETH_TXBD_NUM		16
+#define OETH_RXBD_NUM		4
+#define OETH_TXBD_NUM		4
 #define OETH_RXBD_NUM_MASK	(OETH_RXBD_NUM-1)
 #define OETH_TXBD_NUM_MASK	(OETH_TXBD_NUM-1)
 
