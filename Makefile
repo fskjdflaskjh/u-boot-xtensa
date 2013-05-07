@@ -3714,6 +3714,11 @@ grsim_leon2_config : unconfig
 	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk	
 	echo "export VARIANT" >> $(obj)include/config.mk
 
+%xtkc705_config: unconfig
+	$(MKCONFIG) -a xtkc705 xtensa xtensa xtkc705 avnet NULL $(*:_=)
+	echo "VARIANT = $(*:_=)" >> $(obj)include/config.mk	
+	echo "export VARIANT" >> $(obj)include/config.mk
+
 #########################################################################
 #########################################################################
 #########################################################################
