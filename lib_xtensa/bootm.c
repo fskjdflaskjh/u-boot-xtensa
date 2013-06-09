@@ -133,7 +133,7 @@ static struct bp_tag *setup_fdt_tag(struct bp_tag *params, void *fdt_start)
 {
 	params->id = BP_TAG_FDT;
 	params->size = sizeof (unsigned long);
-	params->data[0] = (unsigned long)fdt_start;
+	params->data[0] = PHYSADDR((unsigned long)fdt_start);
 
 	printf("   FDT:             tag:0x%04x, size:%u, start:0x%lx\n", BP_TAG_FDT, params->size, params->data[0]);
 
