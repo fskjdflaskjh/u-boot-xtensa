@@ -275,6 +275,7 @@ endif
 
 LIBS-$(CONFIG_ARM) += arch/arm/cpu/
 LIBS-$(CONFIG_PPC) += arch/powerpc/cpu/
+LIBS-$(CONFIG_XTENSA) += arch/xtensa/cpu/
 
 LIBS-y += board/$(BOARDDIR)/
 
