@@ -963,7 +963,8 @@ void board_init_r(gd_t *new_gd, ulong dest_addr)
 	mmu_init_r(dest_addr);
 #endif
 
-#if !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
+#if !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64) && \
+    !defined(CONFIG_XTENSA)
 	gd = new_gd;
 #endif
 
