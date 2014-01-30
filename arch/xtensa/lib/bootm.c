@@ -155,7 +155,7 @@ int do_bootm_linux(int flag, int argc, char *argv[], bootm_headers_t *images)
 	void (*kernel)(struct bp_tag *);
 
 	if ((flag != 0) && (flag != BOOTM_STATE_OS_GO))
-		goto error;
+		return 0;
 
 	kernel = (void *)ntohl(hdr->ih_ep);
 
@@ -196,6 +196,8 @@ int do_bootm_linux(int flag, int argc, char *argv[], bootm_headers_t *images)
 
 	printf("Transferring Control to Linux @0x%08lx ...\n\n", (ulong)kernel);
 
+	flush_dcache_range(params_start, params);
+
 	/*
 	 * _start() in vmlinux expects boot params in register a2.
 	 * NOTE:
@@ -210,7 +212,6 @@ int do_bootm_linux(int flag, int argc, char *argv[], bootm_headers_t *images)
 
 	/* Does not return */
 
-error:
 	return 1;
 }
 
