@@ -74,7 +74,7 @@ static int init_sysram(void)
 	gd->ram_top = CONFIG_SYS_MEMORY_TOP;
 	gd->relocaddr = CONFIG_SYS_TEXT_ADDR;
 
-	gd->bd->bi_memstart = CONFIG_SYS_SDRAM_VADDR;
+	gd->bd->bi_memstart = CONFIG_SYS_SDRAM_PHYS;
 	gd->bd->bi_memsize  = CONFIG_SYS_SDRAM_SIZE;
 
 	puts("DRAM:  ");
