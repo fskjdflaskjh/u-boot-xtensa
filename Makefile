@@ -537,8 +537,9 @@ $(SUBDIRS):	depend
 
 $(SUBDIR_EXAMPLES-y): $(obj)u-boot
 
+LDSCRIPT_cmd ?= $(CPP) $(CPPFLAGS) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ -P - <$< >$@
 $(obj)u-boot.lds: $(LDSCRIPT) depend
-		$(CPP) $(CPPFLAGS) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ -P - <$< >$@
+		$(LDSCRIPT_cmd)
 
 nand_spl:	$(TIMESTAMP_FILE) $(VERSION_FILE) depend
 		$(MAKE) -C nand_spl/board/$(BOARDDIR) all
