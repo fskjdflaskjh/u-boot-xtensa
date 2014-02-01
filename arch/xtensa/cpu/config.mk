@@ -21,5 +21,6 @@
 #
 
 # The linker script is pre-processed by CPP to adapt to the Xtensa core.
-LDSCRIPT        := $(SRCTREE)/$(CPUDIR)/u-boot.lds
+LDSCRIPT        := $(SRCTREE)/$(CPUDIR)/u-boot.lds.S
+LDSCRIPT_cmd    = $(CPP) -P -C $(CPPFLAGS) -U$(ARCH) $< >$@
 LDINCS          := -I$(TOPDIR)/include

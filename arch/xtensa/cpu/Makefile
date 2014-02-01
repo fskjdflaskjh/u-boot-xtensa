@@ -21,10 +21,8 @@
 #
 
 obj-y = cpu.o exceptions.o
-extra-y = start.o u-boot.lds
+extra-y = start.o
 
-$(obj)u-boot.lds: u-boot.lds.S ../include/asm/ldscript.h
-	$(CPP) -P -C $(CPPFLAGS) -U$(ARCH) $< >$@
 $(obj).depend.%:	%.lds.S
 	$(CC) -M $(CPPFLAGS) $(EXTRA_CPPFLAGS_DEP) \
 	-MQ $(obj)$(basename $<) $< >$@
