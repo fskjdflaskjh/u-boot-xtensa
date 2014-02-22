@@ -42,9 +42,14 @@ int checkcpu(void)
 {
 	DECLARE_GLOBAL_DATA_PTR;
 	char buf[120], mhz[8];
+	uint32_t id0, id1;
 
-	sprintf(buf, "CPU:   Xtensa %s at %s MHz\n",
-		XCHAL_CORE_ID, strmhz(mhz, gd->cpu_clk));
+	asm volatile ("rsr %0, configid0\n"
+		      "rsr %1, configid1\n"
+		      : "=r"(id0), "=r"(id1));
+
+	sprintf(buf, "CPU:   Xtensa %s (id: %08x:%08x) at %s MHz\n",
+		XCHAL_CORE_ID, id0, id1, strmhz(mhz, gd->cpu_clk));
 	puts(buf);
 	return 0;
 }
