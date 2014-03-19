@@ -172,6 +172,14 @@ _start:
 
 	isync
 
+#if XCHAL_HAVE_PTP_MMU && XCHAL_HAVE_SPANNING_WAY
+	movi	a2, XCHAL_SPANNING_WAY
+	movi	a3, 7
+	wdtlb	a3, a2
+	witlb	a3, a2
+	isync
+#endif
+
 	/* Unpack data sections. */
 
 	movi	a2, __reloc_table_start
@@ -262,6 +270,7 @@ _start:
  * a1 = gd
  * a2 = destination address
  */
+	.text
 	.globl relocate_code
 	.align 4
 relocate_code:
