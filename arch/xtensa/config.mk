@@ -21,7 +21,7 @@
 #
 
 CROSS_COMPILE ?= xtensa-linux-
-PLATFORM_CPPFLAGS += -DCONFIG_XTENSA -D__XTENSA__
+PLATFORM_CPPFLAGS += -DCONFIG_XTENSA -D__XTENSA__ -mlongcalls
 
 LOAD_ADDR_SRC := "\#include <asm/addrspace.h>\n"${CONFIG_STANDALONE_LOAD_ADDR}
 LOAD_ADDR = $(shell echo -e ${LOAD_ADDR_SRC} | $(CC) $(CFLAGS) -E -P - )
@@ -29,3 +29,4 @@ CONFIG_STANDALONE_LOAD_ADDR = $(shell printf "0x%08x" `expr $$[$(LOAD_ADDR)]`)
 
 __HAVE_ARCH_GENERIC_BOARD := y
 
+LDFLAGS_FINAL += --no-relax
