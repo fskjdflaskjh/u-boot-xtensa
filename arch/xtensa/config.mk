@@ -7,7 +7,7 @@
 CROSS_COMPILE ?= xtensa-linux-
 PLATFORM_CPPFLAGS += -D__XTENSA__ -mlongcalls
 
-CPUDIR = arch/$(ARCH)/cpu
+#CPUDIR = arch/$(ARCH)/cpu
 
-__HAVE_ARCH_GENERIC_BOARD := y
+#__HAVE_ARCH_GENERIC_BOARD := y
 

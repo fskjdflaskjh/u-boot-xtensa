@@ -6,6 +6,7 @@
 
 #include <config.h>
 #include <common.h>
+#include <console.h>
 #include <stdio_dev.h>
 #include <version.h>
 #include <net.h>
@@ -31,10 +32,6 @@ gd_t *gd;
 #endif
 
 ulong monitor_flash_len;	/* size of U-Boot packed image in flash */
-
-const char version_string[] =
-	U_BOOT_VERSION" (" __DATE__ " - " __TIME__ ")"CONFIG_IDENT_STRING;
-
 
 /*
  * Initialize baudrate settings in global and board data structures.

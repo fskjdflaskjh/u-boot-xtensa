@@ -9,6 +9,9 @@
 #ifndef _XTENSA_BITOPS_H
 #define _XTENSA_BITOPS_H
 
-/* Use generic implementation */
+#include <asm-generic/bitops/fls.h>
+#include <asm-generic/bitops/__fls.h>
+#include <asm-generic/bitops/fls64.h>
+#include <asm-generic/bitops/__ffs.h>
 
 #endif	/* _XTENSA_BITOPS_H */

@@ -99,13 +99,14 @@
 /*==============================*/
 
 #undef	CONFIG_USE_IRQ			/* Keep it simple, poll only */
-#define CONFIG_SYS_GENERIC_BOARD
+/*#define CONFIG_SYS_GENERIC_BOARD*/
 #define CONFIG_BOARD_POSTCLK_INIT
 #define CONFIG_DISPLAY_BOARDINFO
 #define CONFIG_MISC_INIT_R
 #define CONFIG_MISC_INIT_F
 
 #define CONFIG_BOOTFILE			"uImage"
+#undef  CONFIG_SYS_PROMPT
 #define CONFIG_SYS_PROMPT		"U-Boot> "
 	/* Console I/O Buffer Size  */
 #define CONFIG_SYS_CBSIZE		1024
@@ -126,13 +127,11 @@
 /* U-Boot commands */
 /*=================*/
 
-#include <config_cmd_default.h>
 #define CONFIG_CMD_ASKENV
 #define CONFIG_CMD_DHCP
 #define CONFIG_CMD_DIAG
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_SAVES
-#define CONFIG_CMD_SAVEENV
 #undef CONFIG_CMD_FPGA
 #undef CONFIG_CMD_SETGETDCR
 #undef CONFIG_CMD_XIMG

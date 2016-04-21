@@ -231,7 +231,7 @@ gd_t *global_data;
  */
 
 #ifdef __XTENSA_CALL0_ABI__
-#define EXPORT_FUNC(x)			\
+#define EXPORT_FUNC(f, a, x, ...)	\
 	asm volatile (			\
 "	.globl " #x "\n"		\
 "	.align 4\n"			\
@@ -239,7 +239,7 @@ gd_t *global_data;
 "	l32i	a8, a14, %0\n"		\
 "	l32i	a8, a8, %1\n"		\
 "	jx	a8\n"			\
-	: : "i" (offsetof(gd_t, jt)), "i" (XF_ ## x * sizeof(void *)) : "a8");
+	: : "i" (offsetof(gd_t, jt)), "i" (FO(x)) : "a8");
 #else
 
 static void **jt;
@@ -248,7 +248,7 @@ static void **jt;
 #else
 # define SFT "12"
 #endif
-#define EXPORT_FUNC(x)			\
+#define EXPORT_FUNC(f, a, x, ...)	\
 	asm volatile (			\
 "	.extern jt\n"			\
 "	.globl " #x "\n"		\
@@ -265,7 +265,7 @@ static void **jt;
 "	movsp	sp, a9\n"		\
 "	addi	a8, a8, 3\n"		\
 "	jx	a8\n"			\
-	: : "r"(jt), "i" (XF_ ## x * sizeof(void *)) : "a8", "a9", "a10");
+	: : "r"(jt), "i" (FO(x)) : "a8", "a9", "a10");
 #endif	/* __XTENSA_CALL0_ABI__ */
 #else
 /*"	addi	$sp, $sp, -24\n"	\

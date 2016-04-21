@@ -86,7 +86,7 @@
 	{								\
 		_rodata_start = ABSOLUTE(.);				\
 		*(.rodata)						\
-		*(.rodata.str1.4)					\
+		*(.rodata.*)						\
 		*(.gnu.linkonce.r.*)					\
 		*(.rodata1)						\
 		__XT_EXCEPTION_TABLE__ = ABSOLUTE(.);			\

@@ -116,6 +116,9 @@ config X86
 
 config XTENSA
 	bool "Xtensa architecture"
+	select CREATE_ARCH_SYMLINK
+	select HAVE_GENERIC_BOARD
+	select SYS_GENERIC_BOARD
 
 endchoice
 
