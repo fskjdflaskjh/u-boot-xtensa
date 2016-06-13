@@ -287,7 +287,7 @@ static int abortboot(int bootdelay)
 
 static void process_fdt_options(const void *blob)
 {
-#if defined(CONFIG_OF_CONTROL)
+#if defined(CONFIG_OF_CONTROL) && defined(CONFIG_SYS_TEXT_BASE)
 	ulong addr;
 
 	/* Add an env variable to point to a kernel payload, if available */

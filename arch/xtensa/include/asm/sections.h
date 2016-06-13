@@ -9,7 +9,4 @@
 
 #include <asm-generic/sections.h>
 
-extern void *_text_start;
-#define CONFIG_SYS_TEXT_BASE ((unsigned int)&_text_start)
-
 #endif

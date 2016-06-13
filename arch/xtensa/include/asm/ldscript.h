@@ -87,6 +87,7 @@
 		_rodata_start = ABSOLUTE(.);				\
 		*(.rodata)						\
 		*(.rodata.*)						\
+		*(.dtb.init.rodata)					\
 		*(.gnu.linkonce.r.*)					\
 		*(.rodata1)						\
 		__XT_EXCEPTION_TABLE__ = ABSOLUTE(.);			\
