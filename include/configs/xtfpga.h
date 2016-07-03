@@ -63,11 +63,11 @@
 #ifdef CONFIG_XTFPGA_LX60
 # define CONFIG_SYS_MONITOR_LEN		0x00020000	/* 128KB */
 #else
-# define CONFIG_SYS_MONITOR_LEN		0x00040000	/* 256KB */
+# define CONFIG_SYS_MONITOR_LEN		0x00100000	/* 1MB */
 #endif
 
 #define CONFIG_SYS_STACKSIZE		(512 << 10)	/* stack 512KB */
-#define CONFIG_SYS_MALLOC_LEN		(256 << 10)	/* heap  256KB */
+#define CONFIG_SYS_MALLOC_LEN		(1024 << 10)	/* heap  1MB */
 
 /* Linux boot param area in RAM (used only when booting linux) */
 #define CONFIG_SYS_BOOTPARAMS_LEN	(64  << 10)
@@ -128,12 +128,20 @@
 	/* Boot Argument Buffer Size */
 #define CONFIG_SYS_BARGSIZE		CONFIG_SYS_CBSIZE
 
+#define CONFIG_MTD_DEVICE
+#define CONFIG_MTD_PARTITIONS
+#define CONFIG_RBTREE
+#define CONFIG_LZO
+
 /*=================*/
 /* U-Boot commands */
 /*=================*/
 
 #define CONFIG_CMD_DIAG
 #define CONFIG_CMD_SAVES
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_CMD_UBI
+#define CONFIG_CMD_UBIFS
 
 /*==============================*/
 /* U-Boot autoboot configuration */
@@ -247,6 +255,7 @@
 
 #define CONFIG_SYS_FLASH_CFI
 #define CONFIG_FLASH_CFI_DRIVER			/* use generic CFI driver */
+#define CONFIG_FLASH_CFI_MTD
 #define CONFIG_SYS_FLASH_CFI_WIDTH	FLASH_CFI_16BIT
 #define CONFIG_SYS_MAX_FLASH_BANKS	1
 #ifdef CONFIG_XTFPGA_LX60
