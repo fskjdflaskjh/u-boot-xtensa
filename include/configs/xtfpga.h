@@ -123,6 +123,7 @@
 /*==============================*/
 
 #define CONFIG_BOOT_RETRY_TIME		60	/* retry after 60 secs */
+#define CONFIG_RESET_TO_RETRY
 
 #define CONFIG_AUTO_COMPLETE			/* Support tab autocompletion */
 #define CONFIG_CMDLINE_EDITING
