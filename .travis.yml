@@ -30,7 +30,7 @@ addons:
 
 install:
  # Clone uboot-test-hooks
- - git clone --depth=1 git://github.com/swarren/uboot-test-hooks.git /tmp/uboot-test-hooks
+ - git clone --depth=1 git://github.com/jcmvbkbc/uboot-test-hooks.git /tmp/uboot-test-hooks
  - ln -s travis-ci /tmp/uboot-test-hooks/bin/`hostname`
  - ln -s travis-ci /tmp/uboot-test-hooks/py/`hostname`
  # prepare buildman environment
@@ -389,5 +389,12 @@ matrix:
           QEMU_TARGET="arm-softmmu"
           TEST_PY_ID="--id qemu"
           BUILDMAN="^zynq_zc702$"
+    - env:
+        - TEST_PY_BD="xtfpga"
+          TEST_PY_TEST_SPEC="not sleep"
+          QEMU_TARGET="xtensa-softmmu"
+          TEST_PY_ID="--id qemu"
+          BUILDMAN="^xtfpga$"
+          TOOLCHAIN="xtensa-dc233c-elf"
 
 # TODO make it perfect ;-r
